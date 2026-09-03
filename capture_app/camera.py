@@ -1,19 +1,162 @@
 from __future__ import annotations
 
-import time
+import threading
+from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QSize, QUrl, Signal
-from PySide6.QtMultimedia import (
-    QCamera,
-    QCameraDevice,
-    QCameraFormat,
-    QMediaCaptureSession,
-    QMediaDevices,
-    QMediaFormat,
-    QMediaRecorder,
-)
-from PySide6.QtMultimediaWidgets import QVideoWidget
+import cv2
+from cv2_enumerate_cameras import enumerate_cameras
+from PySide6.QtCore import QObject, QThread, Qt, Signal
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtWidgets import QLabel
+
+
+@dataclass(frozen=True)
+class CameraDevice:
+    index: int
+    name: str
+    path: str
+    backend: int
+
+    def id(self) -> bytes:
+        identity = self.path or f"{self.backend}:{self.index}:{self.name}"
+        return identity.encode("utf-8")
+
+    def description(self) -> str:
+        return self.name
+
+
+class CaptureThread(QThread):
+    frame_ready = Signal(QImage)
+    error = Signal(str)
+
+    def __init__(
+        self,
+        device: CameraDevice,
+        target_width: int,
+        target_height: int,
+        target_fps: float,
+    ):
+        super().__init__()
+        self.device = device
+        self.target_width = target_width
+        self.target_height = target_height
+        self.target_fps = target_fps
+        self.ready = threading.Event()
+        self.open_error = ""
+        self.width = 0
+        self.height = 0
+        self.fps = target_fps
+        self._preview_enabled = True
+        self._lock = threading.RLock()
+        self._writer: cv2.VideoWriter | None = None
+        self._recorded_frames = 0
+
+    def run(self) -> None:
+        capture = cv2.VideoCapture(self.device.index, self.device.backend)
+        try:
+            if not capture.isOpened():
+                self.open_error = (
+                    f"无法打开摄像头：{self.device.name} "
+                    f"(DirectShow index {self.device.index})"
+                )
+                self.ready.set()
+                return
+
+            capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.target_width)
+            capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height)
+            capture.set(cv2.CAP_PROP_FPS, self.target_fps)
+            ok, first_frame = capture.read()
+            if not ok or first_frame is None:
+                self.open_error = f"摄像头没有返回画面：{self.device.name}"
+                self.ready.set()
+                return
+
+            self.height, self.width = first_frame.shape[:2]
+            reported_fps = float(capture.get(cv2.CAP_PROP_FPS))
+            self.fps = (
+                min(reported_fps, self.target_fps)
+                if reported_fps > 0
+                else self.target_fps
+            )
+            self.ready.set()
+            frame = first_frame
+
+            while not self.isInterruptionRequested():
+                self._process_frame(frame)
+                ok, frame = capture.read()
+                if not ok or frame is None:
+                    self.error.emit(
+                        f"摄像头画面中断：{self.device.name}"
+                    )
+                    return
+        finally:
+            self.ready.set()
+            with self._lock:
+                if self._writer is not None:
+                    self._writer.release()
+                    self._writer = None
+            capture.release()
+
+    def _process_frame(self, frame) -> None:
+        with self._lock:
+            if self._writer is not None:
+                self._writer.write(frame)
+                self._recorded_frames += 1
+            preview_enabled = self._preview_enabled
+        if preview_enabled:
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            height, width = rgb.shape[:2]
+            image = QImage(
+                rgb.data,
+                width,
+                height,
+                rgb.strides[0],
+                QImage.Format.Format_RGB888,
+            ).copy()
+            self.frame_ready.emit(image)
+
+    def set_preview_enabled(self, enabled: bool) -> None:
+        with self._lock:
+            self._preview_enabled = enabled
+
+    def start_recording(self, path: Path) -> None:
+        with self._lock:
+            if self._writer is not None:
+                raise RuntimeError("a recording is already active")
+            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+            writer = cv2.VideoWriter(
+                str(path),
+                fourcc,
+                self.fps,
+                (self.width, self.height),
+            )
+            if not writer.isOpened():
+                writer.release()
+                raise RuntimeError(f"无法创建录像文件：{path}")
+            self._writer = writer
+            self._recorded_frames = 0
+
+    def recording_timestamp_ms(self) -> int:
+        with self._lock:
+            if self._writer is None:
+                raise RuntimeError("recording has not started")
+            return round(self._recorded_frames * 1000 / self.fps)
+
+    def stop_recording(self) -> int:
+        with self._lock:
+            if self._writer is None:
+                raise RuntimeError("recording is not active")
+            duration_ms = round(self._recorded_frames * 1000 / self.fps)
+            self._writer.release()
+            self._writer = None
+            self._recorded_frames = 0
+            return duration_ms
+
+    @property
+    def is_recording(self) -> bool:
+        with self._lock:
+            return self._writer is not None
 
 
 class CameraController(QObject):
@@ -23,175 +166,127 @@ class CameraController(QObject):
 
     def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
-        self.capture_session = QMediaCaptureSession(self)
-        self.recorder = QMediaRecorder(self)
-        self.capture_session.setRecorder(self.recorder)
-        self.camera: QCamera | None = None
+        self.worker: CaptureThread | None = None
         self.device_id: bytes | None = None
-        self.resolution = QSize()
+        self.width = 0
+        self.height = 0
         self.frame_rate = 30.0
-        self._recording_started_ns: int | None = None
+        self._preview: QLabel | None = None
         self._requested_path: Path | None = None
 
-        self.recorder.errorOccurred.connect(
-            lambda _error, message: self.error.emit(message or "media recorder error")
-        )
+    @staticmethod
+    def devices() -> list[CameraDevice]:
+        return [
+            CameraDevice(
+                index=int(info.index),
+                name=str(info.name),
+                path=str(info.path or ""),
+                backend=int(info.backend),
+            )
+            for info in enumerate_cameras(cv2.CAP_DSHOW)
+        ]
 
     @staticmethod
-    def devices() -> list[QCameraDevice]:
-        return list(QMediaDevices.videoInputs())
-
-    @staticmethod
-    def find_device(device_id: bytes) -> QCameraDevice | None:
+    def find_device(device_id: bytes) -> CameraDevice | None:
         for device in CameraController.devices():
-            if bytes(device.id()) == device_id:
+            if device.id() == device_id:
                 return device
         return None
 
-    @staticmethod
-    def _choose_format(
-        device: QCameraDevice,
-        target_width: int,
-        target_height: int,
-    ) -> QCameraFormat:
-        formats = list(device.videoFormats())
-        if not formats:
-            return QCameraFormat()
-
-        exact = [
-            item
-            for item in formats
-            if item.resolution().width() == target_width
-            and item.resolution().height() == target_height
-        ]
-        if exact:
-            return max(exact, key=lambda item: item.maxFrameRate())
-
-        target_ratio = target_width / target_height
-
-        def score(item: QCameraFormat) -> tuple[float, int, float]:
-            size = item.resolution()
-            ratio = size.width() / max(size.height(), 1)
-            dimension_distance = abs(size.width() - target_width) + abs(
-                size.height() - target_height
-            )
-            return (
-                abs(ratio - target_ratio),
-                dimension_distance,
-                -item.maxFrameRate(),
-            )
-
-        return min(formats, key=score)
-
     @property
     def is_active(self) -> bool:
-        return bool(self.camera and self.camera.isActive())
+        return bool(self.worker and self.worker.isRunning())
 
     @property
     def is_recording(self) -> bool:
-        return (
-            self.recorder.recorderState()
-            == QMediaRecorder.RecorderState.RecordingState
-        )
+        return bool(self.worker and self.worker.is_recording)
 
     def open(
         self,
-        device: QCameraDevice,
-        preview: QVideoWidget,
+        device: CameraDevice,
+        preview: QLabel,
         target_width: int = 1920,
         target_height: int = 1080,
     ) -> tuple[int, int]:
-        requested_id = bytes(device.id())
-        if self.camera and self.device_id == requested_id:
+        requested_id = device.id()
+        if self.worker and self.device_id == requested_id and self.worker.isRunning():
             self.set_preview(preview)
-            if not self.camera.isActive():
-                self.camera.start()
-            return self.resolution.width(), self.resolution.height()
+            return self.width, self.height
 
         self.close()
-        self.camera = QCamera(device, self)
+        self._preview = preview
+        worker = CaptureThread(device, target_width, target_height, 30.0)
+        worker.frame_ready.connect(self._display_frame)
+        worker.error.connect(self.error.emit)
+        self.worker = worker
         self.device_id = requested_id
-        camera_format = self._choose_format(device, target_width, target_height)
-        if not camera_format.isNull():
-            self.camera.setCameraFormat(camera_format)
-            self.resolution = camera_format.resolution()
-            self.frame_rate = min(max(camera_format.maxFrameRate(), 1.0), 30.0)
-        else:
-            self.resolution = QSize(target_width, target_height)
-            self.frame_rate = 30.0
+        worker.start()
+        if not worker.ready.wait(timeout=10):
+            self.close()
+            raise TimeoutError(f"打开摄像头超时：{device.name}")
+        if worker.open_error:
+            message = worker.open_error
+            self.close()
+            raise RuntimeError(message)
 
-        media_format = QMediaFormat()
-        media_format.setFileFormat(QMediaFormat.FileFormat.MPEG4)
-        media_format.setVideoCodec(QMediaFormat.VideoCodec.H264)
-        self.recorder.setMediaFormat(media_format)
-        self.recorder.setQuality(QMediaRecorder.Quality.VeryHighQuality)
-        self.recorder.setVideoResolution(self.resolution)
-        self.recorder.setVideoFrameRate(self.frame_rate)
+        self.width = worker.width
+        self.height = worker.height
+        self.frame_rate = worker.fps
+        self.active_changed.emit(True)
+        self.resolution_changed.emit(self.width, self.height)
+        return self.width, self.height
 
-        self.camera.errorOccurred.connect(
-            lambda _error, message: self.error.emit(message or "camera error")
+    def set_preview(self, preview: QLabel | None) -> None:
+        self._preview = preview
+        if self.worker:
+            self.worker.set_preview_enabled(preview is not None)
+
+    def _display_frame(self, image: QImage) -> None:
+        if self._preview is None:
+            return
+        pixmap = QPixmap.fromImage(image)
+        self._preview.setPixmap(
+            pixmap.scaled(
+                self._preview.size(),
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            )
         )
-        self.camera.activeChanged.connect(self.active_changed.emit)
-        self.capture_session.setCamera(self.camera)
-        self.set_preview(preview)
-        self.camera.start()
-        self.resolution_changed.emit(
-            self.resolution.width(), self.resolution.height()
-        )
-        return self.resolution.width(), self.resolution.height()
-
-    def set_preview(self, preview: QVideoWidget | None) -> None:
-        self.capture_session.setVideoOutput(preview)
 
     def start_recording(self, output_path: Path) -> Path:
-        if not self.camera or not self.camera.isActive():
+        if not self.worker or not self.worker.isRunning():
             raise RuntimeError("camera is not active")
-        if self.is_recording:
+        if self.worker.is_recording:
             raise RuntimeError("a recording is already active")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         self._requested_path = output_path.resolve()
-        self.recorder.setOutputLocation(
-            QUrl.fromLocalFile(str(self._requested_path))
-        )
-        self._recording_started_ns = time.perf_counter_ns()
-        self.recorder.record()
-        if not self.is_recording:
-            raise RuntimeError(
-                self.recorder.errorString() or "recording did not start"
-            )
+        self.worker.start_recording(self._requested_path)
         return self._requested_path
 
     def timestamp_ms(self) -> int:
-        if self._recording_started_ns is None:
-            raise RuntimeError("recording has not started")
-        wall_ms = (time.perf_counter_ns() - self._recording_started_ns) // 1_000_000
-        media_ms = int(self.recorder.duration())
-        return media_ms if media_ms > 0 else int(wall_ms)
+        if not self.worker:
+            raise RuntimeError("camera is not active")
+        return self.worker.recording_timestamp_ms()
 
     def stop_recording(self) -> tuple[Path, int]:
-        if not self.is_recording:
+        if not self.worker or self._requested_path is None:
             raise RuntimeError("recording is not active")
-        final_timestamp = self.timestamp_ms()
-        self.recorder.stop()
-        actual = self.recorder.actualLocation().toLocalFile()
-        path = Path(actual).resolve() if actual else self._requested_path
-        if path is None:
-            raise RuntimeError("recorder did not provide an output path")
-        self.recorder.setOutputLocation(QUrl())
+        duration_ms = self.worker.stop_recording()
+        path = self._requested_path
+        self._requested_path = None
         if path.exists():
             path.chmod(0o600)
-        self._recording_started_ns = None
-        self._requested_path = None
-        return path, final_timestamp
+        return path, duration_ms
 
     def close(self) -> None:
-        if self.is_recording:
-            self.recorder.stop()
-        if self.camera:
-            self.camera.stop()
-            self.capture_session.setCamera(None)
-            self.camera.deleteLater()
-        self.camera = None
+        worker = self.worker
+        if worker:
+            worker.requestInterruption()
+            worker.wait(5000)
+        self.worker = None
         self.device_id = None
-        self._recording_started_ns = None
+        self._preview = None
         self._requested_path = None
+        self.width = 0
+        self.height = 0
+        self.active_changed.emit(False)

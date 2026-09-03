@@ -16,7 +16,6 @@ from PySide6.QtGui import (
     QPixmap,
     QShortcut,
 )
-from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -238,7 +237,11 @@ class SetupPage(QWidget):
         camera_top.addWidget(self.camera_combo, 1)
         camera_top.addWidget(self.refresh_camera_button)
         camera_layout.addLayout(camera_top)
-        self.preview = QVideoWidget()
+        self.preview = QLabel()
+        self.preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.preview.setStyleSheet(
+            "background: #0f172a; border-radius: 8px;"
+        )
         self.preview.setMinimumSize(480, 270)
         self.preview.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding

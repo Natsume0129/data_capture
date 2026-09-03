@@ -6,7 +6,7 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 
 - PySide6 图形界面。
 - 中文、English、日本語三种界面语言；不翻译题库正文。
-- 自动枚举和选择摄像头。
+- 通过 OpenCV DirectShow 自动枚举和选择摄像头，包括 GoPro Webcam 等 DirectShow 虚拟摄像头。
 - 优先选择 1920×1080、最高 30 FPS 的摄像头格式；实际格式不符时要求实验人员确认。
 - 正式实验期间隐藏自拍预览。
 - 同时选择多个问题集。
@@ -32,6 +32,8 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 - Python 3.13
 - FFmpeg（开发机当前验证版本：8.0.1）
 - PySide6
+- OpenCV
+- cv2-enumerate-cameras
 - google-cloud-texttospeech
 
 安装：
