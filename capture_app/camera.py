@@ -177,6 +177,9 @@ class CameraController(QObject):
         path = Path(actual).resolve() if actual else self._requested_path
         if path is None:
             raise RuntimeError("recorder did not provide an output path")
+        self.recorder.setOutputLocation(QUrl())
+        if path.exists():
+            path.chmod(0o600)
         self._recording_started_ns = None
         self._requested_path = None
         return path, final_timestamp
@@ -192,4 +195,3 @@ class CameraController(QObject):
         self.device_id = None
         self._recording_started_ns = None
         self._requested_path = None
-

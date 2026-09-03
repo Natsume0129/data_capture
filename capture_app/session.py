@@ -72,6 +72,7 @@ def atomic_write_json(path: Path, payload: Any) -> None:
 @dataclass(frozen=True)
 class SessionPaths:
     root: Path
+    practice: Path
     raw: Path
     clips: Path
     logs: Path
@@ -84,13 +85,15 @@ class SessionPaths:
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         session_id = stamp + "_" + uuid.uuid4().hex[:8]
         root = Path(save_root).resolve() / participant / session_id
+        practice = root / "practice"
         raw = root / "raw"
         clips = root / "clips"
         logs = root / "logs"
-        for directory in (raw, clips, logs):
+        for directory in (practice, raw, clips, logs):
             directory.mkdir(parents=True, exist_ok=False)
         return cls(
             root=root,
+            practice=practice,
             raw=raw,
             clips=clips,
             logs=logs,
@@ -256,4 +259,3 @@ def settings_to_json(settings: Any) -> dict[str, Any]:
     if isinstance(tts, dict) and isinstance(tts.get("credentials_path"), Path):
         tts["credentials_path"] = str(tts["credentials_path"])
     return payload
-

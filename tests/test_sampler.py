@@ -3,7 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from capture_app.models import QuestionSet, Scene, Segment
-from capture_app.sampler import build_sampling_plan
+from capture_app.sampler import (
+    build_sampling_plan,
+    build_sampling_plan_with_practice,
+)
 
 
 def make_set(name: str, scene_sizes: list[int]) -> QuestionSet:
@@ -62,3 +65,28 @@ def test_sampling_stops_when_sets_are_exhausted() -> None:
     assert plan.actual_segments == 5
     assert plan.exhausted is True
 
+
+def test_practice_scene_is_excluded_and_formal_target_stays_complete() -> None:
+    sets = [make_set("a", [3, 3, 3]), make_set("b", [3, 3, 3])]
+    practice, formal = build_sampling_plan_with_practice(
+        sets, target_segments=5, seed=42
+    )
+    assert formal.actual_segments == 6
+    assert (
+        practice.question_set_id,
+        practice.scene_id,
+    ) not in {
+        (scene.question_set_id, scene.scene_id)
+        for scene in formal.scenes
+    }
+    assert len(formal.scenes) == 2
+
+
+def test_only_available_scene_becomes_practice_when_pool_is_too_small() -> None:
+    practice, formal = build_sampling_plan_with_practice(
+        [make_set("a", [2])], target_segments=5, seed=1
+    )
+    assert practice.scene_id == "S001"
+    assert formal.scenes == ()
+    assert formal.actual_segments == 0
+    assert formal.exhausted is True

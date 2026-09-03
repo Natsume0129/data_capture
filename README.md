@@ -13,12 +13,16 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 - 场景不重复，场景内片段严格按 CSV 顺序完整执行。
 - 各问题集按已采集片段数轮流均衡抽取，并优先降低目的类别数量差异。
 - 固定随机种子，可复现实验抽样顺序。
-- 手动点击按钮或按空格切换片段。
+- 手动点击按钮或按空格切换片段；实验页会主动保持键盘焦点。
+- 屏幕正中心显示十字标定，帮助被试保持正面视线。
+- 每个正式片段持续显示“表情恢复到自然状态后再继续”的提示。
+- 正式实验前显示实验说明，并完成一个不计入正式统计的练习场景。
+- 练习场景录像单独保留，不写入正式 manifest，也不占目标片段数。
 - 每个场景保存一份无麦克风音轨的原始 MP4。
 - 增量写入时间戳事件日志和 manifest.csv。
 - 支持实验中后台切分，或实验结束后统一切分。
 - 原始视频永久保留；切分失败会写入 manifest，不会删除原始数据。
-- Google Cloud Text-to-Speech 实验前预生成 LINEAR16 WAV，实验中只播放本地缓存。
+- Google Cloud Text-to-Speech 实验前预生成 LINEAR16 WAV，实验中通过 Windows 原生音频接口完整播放本地缓存。
 - TTS 失败时由实验人员明确选择重试、无语音继续或取消，不静默降级。
 - 每个场景支持一张可选配图。
 
@@ -32,7 +36,7 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 
 安装：
 
-    cd D:\data\_capture
+    cd D:\datacapture
     py -3.13 -m venv .venv313
     .\.venv313\Scripts\python.exe -m pip install -r requirements.txt
 
@@ -48,7 +52,7 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 
 当前题库位于：
 
-    D:\data\_capture\question_set\笑容情景模拟实验_刺激问题库_v2_真实细化.csv
+    D:\datacapture\question_set\笑容情景模拟实验_刺激问题库_v2_真实细化.csv
 
 ## 实验流程
 
@@ -58,12 +62,14 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 4. 选择摄像头并检查预览。
 5. 如需语音，选择 Google Cloud 服务账号 JSON，设置文本语言代码、语音名称和语速。
 6. 点击“开始实验”；软件先生成本次计划需要且缓存中不存在的 WAV。
-7. 查看场景综述。此时摄像头已开启，但没有录像。
-8. 点击“开始本场景”或按空格，开始录像并显示片段1。
-9. 每次点击或按空格进入下一片段，同时记录前一片段结束时间和下一片段开始时间。
-10. 最后一个片段完成后停止场景录像。已经开始的场景永远完整执行。
-11. 达到目标片段数后不再抽取新场景；最终数量可以超过目标。
-12. 所有切分结束后显示完成提示并返回设置页。
+7. 阅读实验说明，随后完成第一个练习场景。练习过程与正式流程一致，但不计入正式数据。
+8. 查看正式场景综述。此时摄像头已开启，但没有录像。
+9. 点击“开始本场景”或按空格，开始录像并显示片段1。
+10. 当前表情结束后，等待面部恢复到自然状态，再按空格进入下一片段。
+11. 每次进入下一片段时记录前一片段结束时间和下一片段开始时间。
+12. 最后一个片段完成后停止场景录像。已经开始的场景永远完整执行。
+13. 达到目标片段数后不再抽取新场景；最终数量可以超过目标。
+14. 所有切分结束并释放文件句柄后显示完成提示，文件可由普通用户删除。
 
 ## Google Cloud TTS
 
@@ -73,7 +79,7 @@ Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集�
 
 WAV 缓存位于：
 
-    D:\data\_capture\tts_cache
+    D:\datacapture\tts_cache
 
 缓存键包含原文、语言代码、语音名称、语速和编码，因此配置改变后不会错误复用旧语音。
 
@@ -82,6 +88,7 @@ WAV 缓存位于：
     数据保存路径/
     └─ 被试编号/
        └─ YYYYMMDD_HHMMSS_随机后缀/
+          ├─ practice/
           ├─ raw/
           ├─ clips/
           ├─ logs/
@@ -111,12 +118,12 @@ events.jsonl 在每次场景展示、录像开始、片段切换和录像停止�
 
 输出目录：
 
-    D:\data\_capture\dist\ScenarioCapture
+    D:\datacapture\dist\ScenarioCapture
 
 脚本使用 PyInstaller onedir 模式，并将 ffmpeg.exe 和 question_set 复制到可执行文件旁。分发时必须复制整个 ScenarioCapture 文件夹，不能只复制单个 EXE。
 
 打包后的依赖自检：
 
-    $env:SCENARIO_CAPTURE_SELF_CHECK = "D:\data\_capture\self_check.json"
+    $env:SCENARIO_CAPTURE_SELF_CHECK = "D:\datacapture\self_check.json"
     .\dist\ScenarioCapture\ScenarioCapture.exe
     Remove-Item Env:SCENARIO_CAPTURE_SELF_CHECK

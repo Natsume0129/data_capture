@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import shutil
 from pathlib import Path
 
 from capture_app.models import Scene, Segment
@@ -68,4 +69,5 @@ def test_manifest_and_event_log_are_written_incrementally(tmp_path: Path) -> Non
     event = json.loads((paths.logs / "events.jsonl").read_text(encoding="utf-8"))
     assert event["event"] == "segment_started"
     assert event["segment_id"] == "P001"
-
+    shutil.rmtree(paths.root)
+    assert not paths.root.exists()

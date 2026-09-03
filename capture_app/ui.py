@@ -5,16 +5,17 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QSettings, Qt, QThread, QUrl, Signal
+from PySide6.QtCore import QSettings, Qt, QThread, Signal
 from PySide6.QtGui import (
     QColor,
     QCloseEvent,
     QKeySequence,
     QPalette,
+    QPainter,
+    QPen,
     QPixmap,
     QShortcut,
 )
-from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
     QApplication,
@@ -43,11 +44,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .audio import LocalWavPlayer
 from .camera import CameraController
 from .i18n import LANGUAGES, Translator
 from .models import ExperimentSettings, QuestionSet, Scene, TTSSettings
 from .question_sets import QuestionSetError, load_question_set
-from .sampler import build_sampling_plan
+from .sampler import build_sampling_plan_with_practice
 from .session import (
     EventLogger,
     ManifestStore,
@@ -105,6 +107,10 @@ QPushButton#primaryButton { background: #1769aa; color: white; font-weight: 600;
 QPushButton#primaryButton:hover { background: #12568d; }
 QPushButton#dangerButton { background: #fee2e2; color: #991b1b; }
 QLabel#recordingLabel { color: #b91c1c; font-weight: 700; }
+QLabel#recoveryHint {
+    color: #334155; background: #eef6ff; border: 1px solid #bfdbfe;
+    border-radius: 7px; padding: 8px 14px; font-weight: 600;
+}
 QLabel#pageTitle { font-size: 25px; font-weight: 700; color: #0f2742; }
 QTextBrowser {
     background: white; border: 1px solid #d9e2ef; border-radius: 12px;
@@ -458,12 +464,32 @@ class SetupPage(QWidget):
             )
 
 
+class Crosshair(QWidget):
+    def __init__(self, parent: QWidget):
+        super().__init__(parent)
+        self.setFixedSize(42, 42)
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+
+    def paintEvent(self, event: Any) -> None:
+        del event
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        pen = QPen(QColor("#dc2626"))
+        pen.setWidth(2)
+        painter.setPen(pen)
+        center = self.rect().center()
+        painter.drawLine(center.x() - 14, center.y(), center.x() + 14, center.y())
+        painter.drawLine(center.x(), center.y() - 14, center.x(), center.y() + 14)
+        painter.drawEllipse(center, 4, 4)
+
+
 class ExperimentPage(QWidget):
     advance_clicked = Signal()
     abort_clicked = Signal()
 
     def __init__(self, translator: Translator):
         super().__init__()
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.translator = translator
         self._image_source: QPixmap | None = None
         layout = QVBoxLayout(self)
@@ -479,6 +505,13 @@ class ExperimentPage(QWidget):
         header.addSpacing(18)
         header.addWidget(self.overall_progress_label)
         layout.addLayout(header)
+
+        self.recovery_hint = QLabel()
+        self.recovery_hint.setObjectName("recoveryHint")
+        self.recovery_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.recovery_hint.setWordWrap(True)
+        self.recovery_hint.hide()
+        layout.addWidget(self.recovery_hint)
 
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -499,27 +532,53 @@ class ExperimentPage(QWidget):
         controls.addStretch()
         self.abort_button = QPushButton()
         self.abort_button.setObjectName("dangerButton")
+        self.abort_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.abort_button.clicked.connect(self.abort_clicked)
         controls.addWidget(self.abort_button)
         self.advance_button = QPushButton()
         self.advance_button.setObjectName("primaryButton")
+        self.advance_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.advance_button.clicked.connect(self.advance_clicked)
         controls.addWidget(self.advance_button)
         layout.addLayout(controls)
 
-        shortcut = QShortcut(QKeySequence(Qt.Key.Key_Space), self)
-        shortcut.activated.connect(
+        self.advance_shortcut = QShortcut(
+            QKeySequence(Qt.Key.Key_Space), self
+        )
+        self.advance_shortcut.setContext(
+            Qt.ShortcutContext.WindowShortcut
+        )
+        self.advance_shortcut.activated.connect(
             lambda: self.advance_clicked.emit()
             if self.advance_button.isEnabled()
             else None
         )
-        self._mode = "summary"
+        self.crosshair = Crosshair(self)
+        self.crosshair.raise_()
+        self._mode = "instructions"
+        self._practice = False
         self.retranslate()
 
     def retranslate(self) -> None:
         self.abort_button.setText(self.translator.text("abort_experiment"))
-        if self._mode == "summary":
-            self.stage_label.setText(self.translator.text("scene_overview"))
+        self.recovery_hint.setText(
+            self.translator.text("recovery_hint")
+            + "\n"
+            + self.translator.text("space_hint")
+        )
+        if self._mode == "instructions":
+            self.stage_label.setText(
+                self.translator.text("experiment_instructions")
+            )
+            self.advance_button.setText(
+                self.translator.text("begin_practice")
+            )
+        elif self._mode == "summary":
+            self.stage_label.setText(
+                self.translator.text(
+                    "practice_scene" if self._practice else "scene_overview"
+                )
+            )
             self.advance_button.setText(self.translator.text("start_scene"))
             self.recording_label.setText(
                 self.translator.text("not_recording")
@@ -528,6 +587,31 @@ class ExperimentPage(QWidget):
             self.recording_label.setText(self.translator.text("recording"))
         elif self._mode == "splitting":
             self.recording_label.clear()
+
+    def show_instructions(self) -> None:
+        self._mode = "instructions"
+        self._practice = True
+        self.stage_label.setText(
+            self.translator.text("experiment_instructions")
+        )
+        self.scene_progress_label.setText(
+            self.translator.text("practice_not_counted")
+        )
+        self.overall_progress_label.clear()
+        self.text.setPlainText(self.translator.text("instruction_body"))
+        self.recovery_hint.hide()
+        self.image_label.hide()
+        self.advance_button.setText(
+            self.translator.text("begin_practice")
+        )
+        self.advance_button.setEnabled(True)
+        self.abort_button.setEnabled(True)
+        self.recording_label.setText(
+            self.translator.text("not_recording")
+        )
+        self.crosshair.show()
+        self.crosshair.raise_()
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def set_progress(
         self, scene_current: int, scene_total: int, done: int, target: int
@@ -541,24 +625,37 @@ class ExperimentPage(QWidget):
             self.translator.text("progress", done=done, target=target)
         )
 
-    def show_scene_summary(self, scene: Scene) -> None:
+    def show_scene_summary(self, scene: Scene, practice: bool = False) -> None:
         self._mode = "summary"
-        self.stage_label.setText(self.translator.text("scene_overview"))
+        self._practice = practice
+        self.stage_label.setText(
+            self.translator.text(
+                "practice_scene" if practice else "scene_overview"
+            )
+        )
         self.text.setPlainText(scene.text)
+        self.recovery_hint.hide()
         self.advance_button.setText(self.translator.text("start_scene"))
         self.advance_button.setEnabled(True)
         self.abort_button.setEnabled(True)
         self.recording_label.setText(self.translator.text("not_recording"))
         self._set_image(scene.image_path)
+        self.crosshair.show()
+        self.crosshair.raise_()
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
 
-    def show_segment(self, scene: Scene, index: int) -> None:
+    def show_segment(
+        self, scene: Scene, index: int, practice: bool = False
+    ) -> None:
         self._mode = "segment"
+        self._practice = practice
         segment = scene.segments[index]
         self.stage_label.setText(
             f"{segment.segment_id}  ·  {index + 1}/{len(scene.segments)}"
         )
         self.text.setPlainText(segment.text)
         self.recording_label.setText(self.translator.text("recording"))
+        self.recovery_hint.show()
         key = (
             "finish_scene"
             if index == len(scene.segments) - 1
@@ -567,6 +664,9 @@ class ExperimentPage(QWidget):
         self.advance_button.setText(self.translator.text(key))
         self.advance_button.setEnabled(True)
         self._set_image(scene.image_path)
+        self.crosshair.show()
+        self.crosshair.raise_()
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def show_splitting(self, done: int, total: int) -> None:
         self._mode = "splitting"
@@ -577,6 +677,8 @@ class ExperimentPage(QWidget):
         self.advance_button.setEnabled(False)
         self.abort_button.setEnabled(False)
         self.image_label.hide()
+        self.recovery_hint.hide()
+        self.crosshair.hide()
         self.recording_label.clear()
 
     def _set_image(self, image_path: Path | None) -> None:
@@ -606,6 +708,11 @@ class ExperimentPage(QWidget):
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
         self._rescale_image()
+        self.crosshair.move(
+            (self.width() - self.crosshair.width()) // 2,
+            (self.height() - self.crosshair.height()) // 2,
+        )
+        self.crosshair.raise_()
 
 
 class MainWindow(QMainWindow):
@@ -617,10 +724,7 @@ class MainWindow(QMainWindow):
         self.translator = Translator(str(language))
         self.camera = CameraController(self)
         self.camera.error.connect(self._camera_error)
-        self.audio_output = QAudioOutput(self)
-        self.audio_output.setVolume(1.0)
-        self.audio_player = QMediaPlayer(self)
-        self.audio_player.setAudioOutput(self.audio_output)
+        self.audio_player = LocalWavPlayer()
 
         self.stack = QStackedWidget()
         self.setup = SetupPage(self.translator, self.project_root)
@@ -650,6 +754,9 @@ class MainWindow(QMainWindow):
     def _reset_runtime(self) -> None:
         self.settings: ExperimentSettings | None = None
         self.plan = None
+        self.practice_scene: Scene | None = None
+        self.is_practice = False
+        self.flow_state = "idle"
         self.session_paths: SessionPaths | None = None
         self.event_logger: EventLogger | None = None
         self.manifest: ManifestStore | None = None
@@ -683,13 +790,15 @@ class MainWindow(QMainWindow):
         self.retranslate()
 
     def _restore_setup_settings(self) -> None:
-        self.setup.save_edit.setText(
-            str(
-                self.qt_settings.value(
-                    "save_root", str(self.project_root / "data")
-                )
+        saved_root = str(
+            self.qt_settings.value(
+                "save_root", str(self.project_root / "data")
             )
         )
+        if Path(saved_root) == Path("D:/data/_capture/data"):
+            saved_root = str(self.project_root / "data")
+            self.qt_settings.setValue("save_root", saved_root)
+        self.setup.save_edit.setText(saved_root)
         self.setup.ffmpeg_edit.setText(
             str(
                 self.qt_settings.value(
@@ -856,7 +965,7 @@ class MainWindow(QMainWindow):
         try:
             ffmpeg = ensure_ffmpeg(self.setup.ffmpeg_edit.text().strip())
             settings = self._collect_settings(ffmpeg)
-            plan = build_sampling_plan(
+            practice_scene, plan = build_sampling_plan_with_practice(
                 question_sets,
                 settings.target_segments,
                 settings.random_seed,
@@ -886,7 +995,7 @@ class MainWindow(QMainWindow):
                 return
 
         summary = self.translator.text(
-            "plan_summary",
+            "plan_summary_with_practice",
             scenes=len(plan.scenes),
             segments=plan.actual_segments,
         )
@@ -897,6 +1006,7 @@ class MainWindow(QMainWindow):
 
         self.settings = settings
         self.plan = plan
+        self.practice_scene = practice_scene
         self.tts_effective = settings.tts.enabled
         self._save_setup_settings(settings)
         if settings.tts.enabled:
@@ -914,9 +1024,11 @@ class MainWindow(QMainWindow):
             speaking_rate=self.settings.tts.speaking_rate,
         )
         cache = TTSCache(self.project_root / "tts_cache", config)
+        scenes = [self.practice_scene, *self.plan.scenes]
         texts = [
             text
-            for scene in self.plan.scenes
+            for scene in scenes
+            if scene is not None
             for text in [scene.text, *(item.text for item in scene.segments)]
         ]
         self.tts_progress = QProgressDialog(
@@ -1000,7 +1112,11 @@ class MainWindow(QMainWindow):
                 "question_sets": sorted(
                     {
                         scene.question_set_name
-                        for scene in self.plan.scenes
+                        for scene in [
+                            self.practice_scene,
+                            *self.plan.scenes,
+                        ]
+                        if scene is not None
                     }
                 ),
                 "sampling": {
@@ -1008,6 +1124,11 @@ class MainWindow(QMainWindow):
                     "actual_segments": self.plan.actual_segments,
                     "seed": self.plan.seed,
                     "exhausted": self.plan.exhausted,
+                    "practice_scene_id": (
+                        self.practice_scene.question_set_id
+                        + ":"
+                        + self.practice_scene.scene_id
+                    ),
                     "scene_ids": [
                         scene.question_set_id + ":" + scene.scene_id
                         for scene in self.plan.scenes
@@ -1020,6 +1141,7 @@ class MainWindow(QMainWindow):
             self.event_logger.write(
                 "session_started",
                 session_id=self.session_paths.session_id,
+                practice_scenes=1,
                 planned_scenes=len(self.plan.scenes),
                 planned_segments=self.plan.actual_segments,
             )
@@ -1035,50 +1157,83 @@ class MainWindow(QMainWindow):
         self.scene_index = 0
         self.segment_index = -1
         self.captured_segments = 0
-        self._show_scene_summary()
+        self.is_practice = True
+        self.flow_state = "instructions"
+        self.experiment.show_instructions()
+        self.event_logger.write("experiment_instructions_shown")
 
     @property
     def current_scene(self) -> Scene:
         assert self.plan
+        if self.is_practice:
+            assert self.practice_scene
+            return self.practice_scene
         return self.plan.scenes[self.scene_index]
 
     def _show_scene_summary(self) -> None:
         scene = self.current_scene
         self.segment_index = -1
-        self.experiment.set_progress(
-            self.scene_index + 1,
-            len(self.plan.scenes),
-            self.captured_segments,
-            self.plan.requested_segments,
+        self.flow_state = "summary"
+        if self.is_practice:
+            self.experiment.scene_progress_label.setText(
+                self.translator.text("practice_not_counted")
+            )
+            self.experiment.overall_progress_label.setText(
+                self.translator.text(
+                    "progress",
+                    done=self.captured_segments,
+                    target=self.plan.requested_segments,
+                )
+            )
+        else:
+            self.experiment.set_progress(
+                self.scene_index + 1,
+                len(self.plan.scenes),
+                self.captured_segments,
+                self.plan.requested_segments,
+            )
+        self.experiment.show_scene_summary(
+            scene, practice=self.is_practice
         )
-        self.experiment.show_scene_summary(scene)
         self._play_text(scene.text)
         assert self.event_logger
         self.event_logger.write(
             "scene_summary_shown",
             question_set_id=scene.question_set_id,
             scene_id=scene.scene_id,
-            scene_order=self.scene_index + 1,
+            scene_order=0 if self.is_practice else self.scene_index + 1,
+            practice=self.is_practice,
         )
 
     def _advance(self) -> None:
         if not self.plan or self.finishing:
             return
-        if self.segment_index < 0:
+        if self.flow_state == "instructions":
+            self._show_scene_summary()
+        elif self.flow_state == "summary":
             self._start_scene_recording()
-        elif self.segment_index < len(self.current_scene.segments) - 1:
+        elif (
+            self.flow_state == "segment"
+            and self.segment_index < len(self.current_scene.segments) - 1
+        ):
             self._next_segment()
-        else:
+        elif self.flow_state == "segment":
             self._finish_scene()
 
     def _start_scene_recording(self) -> None:
         assert self.session_paths and self.event_logger
         scene = self.current_scene
-        raw_name = (
-            f"{self.scene_index + 1:03d}_{scene.question_set_id}_"
-            f"{scene.scene_id}.mp4"
-        )
-        requested_path = self.session_paths.raw / raw_name
+        if self.is_practice:
+            raw_name = (
+                f"practice_{scene.question_set_id}_{scene.scene_id}.mp4"
+            )
+            requested_path = self.session_paths.practice / raw_name
+        else:
+            raw_name = (
+                f"{self.scene_index + 1:03d}_{scene.question_set_id}_"
+                f"{scene.scene_id}.mp4"
+            )
+            requested_path = self.session_paths.raw / raw_name
         try:
             self.current_raw_path = self.camera.start_recording(
                 requested_path
@@ -1089,20 +1244,25 @@ class MainWindow(QMainWindow):
         self.current_timings = []
         self.current_segment_start_ms = 0
         self.segment_index = 0
+        self.flow_state = "segment"
         segment = scene.segments[0]
         self.event_logger.write(
             "recording_started",
             question_set_id=scene.question_set_id,
             scene_id=scene.scene_id,
             raw_video=str(self.current_raw_path),
+            practice=self.is_practice,
         )
         self.event_logger.write(
             "segment_started",
             scene_id=scene.scene_id,
             segment_id=segment.segment_id,
             media_timestamp_ms=0,
+            practice=self.is_practice,
         )
-        self.experiment.show_segment(scene, 0)
+        self.experiment.show_segment(
+            scene, 0, practice=self.is_practice
+        )
         self._play_text(segment.text)
 
     def _next_segment(self) -> None:
@@ -1129,6 +1289,7 @@ class MainWindow(QMainWindow):
             scene_id=scene.scene_id,
             segment_id=current.segment_id,
             media_timestamp_ms=boundary,
+            practice=self.is_practice,
         )
         self.segment_index += 1
         self.current_segment_start_ms = boundary
@@ -1138,8 +1299,11 @@ class MainWindow(QMainWindow):
             scene_id=scene.scene_id,
             segment_id=following.segment_id,
             media_timestamp_ms=boundary,
+            practice=self.is_practice,
         )
-        self.experiment.show_segment(scene, self.segment_index)
+        self.experiment.show_segment(
+            scene, self.segment_index, practice=self.is_practice
+        )
         self._play_text(following.text)
 
     def _finish_scene(self) -> None:
@@ -1167,6 +1331,7 @@ class MainWindow(QMainWindow):
             scene_id=scene.scene_id,
             segment_id=final_segment.segment_id,
             media_timestamp_ms=boundary,
+            practice=self.is_practice,
         )
         try:
             actual_raw, recorder_duration = self.camera.stop_recording()
@@ -1180,7 +1345,26 @@ class MainWindow(QMainWindow):
             media_timestamp_ms=boundary,
             recorder_duration_ms=recorder_duration,
             raw_video=str(actual_raw),
+            practice=self.is_practice,
         )
+
+        if self.is_practice:
+            self.event_logger.write(
+                "practice_scene_completed",
+                scene_id=scene.scene_id,
+                raw_video=str(actual_raw),
+                segment_count=len(scene.segments),
+            )
+            self.current_raw_path = None
+            self.current_timings = []
+            self.segment_index = -1
+            self.is_practice = False
+            if not self.plan.scenes:
+                self._finish_experiment()
+            else:
+                self.scene_index = 0
+                self._show_scene_summary()
+            return
 
         rows = build_manifest_rows(
             participant_id=self.settings.participant_id,
@@ -1301,7 +1485,7 @@ class MainWindow(QMainWindow):
         )
         session_root = self.session_paths.root
         failures = self.split_failures
-        self._cleanup_runtime()
+        self._cleanup_runtime(wait_for_splitter=True)
         self.stack.setCurrentWidget(self.setup)
         self.camera.close()
         self.setup.set_camera_status(None, None)
@@ -1325,8 +1509,7 @@ class MainWindow(QMainWindow):
         self.audio_player.stop()
         path = self.audio_paths.get(text)
         if path and path.is_file():
-            self.audio_player.setSource(QUrl.fromLocalFile(str(path)))
-            self.audio_player.play()
+            self.audio_player.play(path)
 
     def _camera_error(self, error: str) -> None:
         QMessageBox.critical(
@@ -1374,9 +1557,9 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(self.setup)
         return True
 
-    def _cleanup_runtime(self) -> None:
+    def _cleanup_runtime(self, wait_for_splitter: bool = False) -> None:
         if self.split_manager:
-            self.split_manager.shutdown(wait=False)
+            self.split_manager.shutdown(wait=wait_for_splitter)
         if self.event_logger:
             self.event_logger.close()
         self.audio_player.stop()

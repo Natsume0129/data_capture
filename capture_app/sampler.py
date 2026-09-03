@@ -92,3 +92,36 @@ def build_sampling_plan(
         exhausted=total_segments < target_segments and total_segments == available_total,
     )
 
+
+def build_sampling_plan_with_practice(
+    question_sets: list[QuestionSet],
+    target_segments: int,
+    seed: int,
+) -> tuple[Scene, SamplingPlan]:
+    if not question_sets:
+        raise ValueError("at least one question set is required")
+    largest_scene = max(
+        len(scene.segments)
+        for question_set in question_sets
+        for scene in question_set.scenes
+    )
+    expanded = build_sampling_plan(
+        question_sets,
+        target_segments=target_segments + largest_scene,
+        seed=seed,
+    )
+    practice_scene = expanded.scenes[0]
+    formal_scenes: list[Scene] = []
+    formal_segments = 0
+    for scene in expanded.scenes[1:]:
+        if formal_segments >= target_segments:
+            break
+        formal_scenes.append(scene)
+        formal_segments += len(scene.segments)
+    return practice_scene, SamplingPlan(
+        scenes=tuple(formal_scenes),
+        requested_segments=target_segments,
+        actual_segments=formal_segments,
+        seed=seed,
+        exhausted=formal_segments < target_segments,
+    )

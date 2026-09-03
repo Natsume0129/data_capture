@@ -108,6 +108,7 @@ def run_split(ffmpeg: Path, task: SplitTask) -> None:
         raise RuntimeError(result.stderr.strip() or "FFmpeg split failed")
     if not task.output_path.is_file() or task.output_path.stat().st_size == 0:
         raise RuntimeError("FFmpeg returned success without an output file")
+    task.output_path.chmod(0o600)
 
 
 class SplitManager:
@@ -167,4 +168,3 @@ class SplitManager:
                     self._pending -= 1
                 self._queue.task_done()
             self.on_result(task, success, error)
-
