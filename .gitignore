@@ -39,6 +39,7 @@ ENV/
 events.jsonl
 manifest.csv
 session.json
+stimuli.json
 
 # Google Cloud credentials and local secrets
 .env
@@ -53,6 +54,7 @@ service_account*.json
 # Local diagnostics and visual QA output
 /*self_check*.json
 /ui_*.png
+/tmp/
 *.log
 *.tmp
 *.part

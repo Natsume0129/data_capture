@@ -1,0 +1,214 @@
+{
+  "generation": "Built-in imagegen; synthetic photorealistic imagery",
+  "prompt_standard": "First-person eye-level, invisible participant, natural everyday photography, landscape approximately 16:9. One image per scenario, shared by all of its segments.",
+  "images": [
+    {
+      "title": "和久违的好朋友重逢",
+      "scene_text": "和久违的好朋友重逢：请想象一个工作日傍晚，你拖着行李走出车站，在拥挤的人群里突然听见有人叫你小时候的昵称。你回头发现是多年没有见、过去关系很好的朋友。你们事先都不知道对方会出现在这里。请按顺序代入以下片段。",
+      "file": "illustrations/scene_001_reunion.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "9b80bed52ae581e979c22a80a86f74a66da5dd9ebef083c4a822b35668632166"
+    },
+    {
+      "title": "和久违的好友聚餐",
+      "scene_text": "和久违的好友聚餐：请想象你与一位曾经非常亲近、现在因工作和距离很少见面的好友在安静的小餐馆吃饭。最初略有生疏，但聊天慢慢回到过去熟悉的节奏。请按顺序代入以下片段。",
+      "file": "illustrations/scene_002_old_friend_dinner.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "5ca5969c0c9170565cbd2194ff38dffbb40044281852e986df0b1dc3d845f1f4"
+    },
+    {
+      "title": "意外遇到认识你、但你认不出的人",
+      "scene_text": "意外遇到认识你、但你认不出的人：请想象你在商场排队买咖啡，一位与你年龄相近的人突然准确叫出你的名字，像老熟人一样向你打招呼。你确定见过对方，却完全想不起姓名和认识的场合。请按顺序代入以下片段。",
+      "file": "illustrations/scene_003_unrecognized_acquaintance.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "374cc7875d002293fb8da1e326d1b68d1b9527a3b3a9849ed2ba1652b56caaf0"
+    },
+    {
+      "title": "收到用心制作的礼物",
+      "scene_text": "收到用心制作的礼物：请想象在一个对你很有纪念意义的日子，一位关系很好的朋友约你见面。她拿出包装精致的小盒子，说为了准备这份礼物，断断续续做了几个星期。请按顺序代入以下片段。",
+      "file": "illustrations/scene_004_handmade_gift.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "f800b8cb883c346165ec243185f04182e707ac025a27416d1832dbe3391e753b"
+    },
+    {
+      "title": "工作中被褒奖",
+      "scene_text": "工作中被褒奖：请想象周一的部门例会上，大家正在复盘上周一次临时故障。你原本只准备汇报进度，主管却在所有同事面前点名说明，是你及时发现了关键问题，并称赞你的处理很稳妥。请按顺序代入以下片段。",
+      "file": "illustrations/scene_005_work_praise.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "31ca27ded35e9193ab545e8c3c0447abfe968d964d575bdf75f5a2ae2b6163b4"
+    },
+    {
+      "title": "工作中被批评",
+      "scene_text": "工作中被批评：请想象在项目复盘会上，你负责的报告被投到大屏幕上。主管指出其中遗漏了一项需求，导致其他同事需要临时返工。问题确实存在，但现场还有几位并不了解完整过程的人。请按顺序代入以下片段。",
+      "file": "illustrations/scene_006_work_criticism.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "5f2a0d82bd74ca56e317d173dee77b57e0a0c4c0f143b976c6d8d0920910ecd7"
+    },
+    {
+      "title": "第一次见上司或教授",
+      "scene_text": "第一次见上司或教授：请想象你第一次单独进入一位上司或教授的办公室，准备汇报一个自己很重视的方案。你提前演练过开场，但对对方的性格并不了解。请按顺序代入以下片段。",
+      "file": "illustrations/scene_007_supervisor_group.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "4c311918b1e0de9a936497547d07276791d846ce8d49c0f6adc75fc95aa0e02f"
+    },
+    {
+      "title": "电车因人身事故延迟",
+      "scene_text": "电车因人身事故延迟：请想象工作日傍晚，你在车站等一班关系到后续换乘的电车。站台广播突然通知前方发生人身事故，恢复时间未定。无需想象事故画面，只关注等待、行程被打乱和与周围人的互动。请按顺序代入以下片段。",
+      "file": "illustrations/scene_008_train_delay.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "fe3b7d69be6727c1a35d33ea9373f5f9789c650bcc10ff428c18cf6865f06f99"
+    },
+    {
+      "title": "幸运买到最后一块蛋糕",
+      "scene_text": "幸运买到最后一块蛋糕：请想象下班后你特意绕路去一家常去的蛋糕店，想买当天限定、经常提前售罄的蛋糕。你到店时展示柜几乎空了，只在角落里还放着最后一块。请按顺序代入以下片段。",
+      "file": "illustrations/scene_009_last_cake.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "0f0d7b21da6271d491ad0102c5a2c5a8f5570fe39603d3a6ecce592173999412"
+    },
+    {
+      "title": "随意进入一家很合胃口的店",
+      "scene_text": "随意进入一家很合胃口的店：请想象周末下午你没有明确目的地，在一条不熟悉的街上躲开人群，随手推门进入一家看起来普通的小店。店内音乐、气味、陈列和商品风格都意外符合你的喜好。请按顺序代入以下片段。",
+      "file": "illustrations/scene_010_hidden_gem_shop.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "4b5f527d21cba1738fec2844da4d21a39c985aa41bcd94ad66ec2f4f209ce66e"
+    },
+    {
+      "title": "期待已久的预约餐厅并不好吃",
+      "scene_text": "期待已久的预约餐厅并不好吃：请想象你提前一个多月预约了一家评价很高的餐厅，还专门空出了晚上。你和朋友准时到店，环境看起来不错，但菜品从第一口开始就和期待有明显差距。请按顺序代入以下片段。",
+      "file": "illustrations/scene_011_disappointing_restaurant.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "8f6b6092060b12b98795037ff5ebf2365a891b4be5e0a3e07460ee221ba38994"
+    },
+    {
+      "title": "向朋友讲述周末的快乐经历",
+      "scene_text": "向朋友讲述周末的快乐经历：请想象周一午休，你和一位熟悉的同事或朋友坐在安静的角落吃饭。对方知道你周末参加了期待已久的活动，主动问后来怎么样。请按顺序代入以下片段。",
+      "file": "illustrations/scene_012_weekend_story.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "fd3333023d0a29d6e17211e331aef067861408f4037c4ff4f124d3b262f81cbf"
+    },
+    {
+      "title": "出门没带伞却突然下雨",
+      "scene_text": "出门没带伞却突然下雨：请想象你出门时天气预报只说多云，因此没有带伞。傍晚离目的地还有十分钟路程时，雨点突然变密，很快变成大雨，附近只有一个狭窄屋檐可以暂时躲避。请按顺序代入以下片段。",
+      "file": "illustrations/scene_013_sudden_rain.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "57659cedc45c7219e20dec6dd1114427785b5437e8f03d8f299b6733065aa655"
+    },
+    {
+      "title": "电视剧迎来圆满结局",
+      "scene_text": "电视剧迎来圆满结局：请想象你独自追了一部很久的电视剧，主角经历多次误会和分离，最后一集前仍让人担心。你在熟悉、安静的房间里看到结局，故事最终以圆满方式收束。请按顺序代入以下片段。",
+      "file": "illustrations/scene_014_happy_ending.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "7d804e7ab14228513543579a0a054ee5cf376164d8fc130943d21f7ea3ee4b75"
+    },
+    {
+      "title": "和自己的宠物一起玩",
+      "scene_text": "和自己的宠物一起玩：请想象一个不用赶时间的晚上，你回到家，平时与你亲近的宠物已经在门口等你。它精力很好，主动把最喜欢的玩具带到你面前。请按顺序代入以下片段。",
+      "file": "illustrations/scene_015_pet_play.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "b05f365e7bd0bd375430ffb3c5ac4cd58c1bfd95f64a5349aef94cd8195c3a5a"
+    },
+    {
+      "title": "和喜欢的小朋友玩耍",
+      "scene_text": "和喜欢的小朋友玩耍：请想象你在亲友家中陪一个平时很喜欢、也熟悉你的四到六岁小朋友玩积木。孩子对你很信任，表达直接，不需要你承担真实的照护风险。请按顺序代入以下片段。",
+      "file": "illustrations/scene_016_child_play.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "0c030faec540fd4a052a2104e2d51e1b89b18c9e9f41971afaa31ad87fa65f93"
+    },
+    {
+      "title": "别人做出让你讨厌的事情",
+      "scene_text": "别人做出让你讨厌的事情：请想象一次小组合作中，有位成员平时很少承担任务，却在公开汇报时反复打断别人、把团队成果说成主要由自己完成。情境为虚构角色扮演，不对应现实中特定个人。请按顺序代入以下片段。",
+      "file": "illustrations/scene_017_annoying_behavior.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "171e879af30accec2c348a2df3bd04be7a1b8215150fee6bc80a03d3a89b38e6"
+    },
+    {
+      "title": "进行无害的恶作剧",
+      "scene_text": "进行无害的恶作剧：请想象你为一位关系很好、能接受轻松玩笑的朋友准备生日礼物。你把真正礼物藏在冰箱里，桌上只放一个套了很多层盒子的假礼物，每层都有下一步提示。请按顺序代入以下片段。",
+      "file": "illustrations/scene_018_harmless_prank.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "003649eae8109d86bc652ae01b69771207e0ec73ea98cf435b95515b33665312"
+    },
+    {
+      "title": "聚会上与陌生人交谈",
+      "scene_text": "聚会上与陌生人交谈：请想象你参加一位朋友组织的小型聚会。现场大多数人彼此认识，你只认识主人。一位态度友好的陌生人拿着饮料走过来，在不拥挤的角落主动与你聊天。请按顺序代入以下片段。",
+      "file": "illustrations/scene_019_party_stranger.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "30b55d9ab914707f8ff4889b8db721ab601dae201e88ebc1247cea22356f3ccb"
+    },
+    {
+      "title": "第一次与互有好感的人单独见面",
+      "scene_text": "第一次与互有好感的人单独见面：请想象你和一位已经聊过几次、彼此都有好感的人第一次单独在咖啡店见面。环境安静，谈话总体顺利，但双方都知道这次见面比普通朋友更特别。请按顺序代入以下片段。",
+      "file": "illustrations/scene_020_first_date.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "eb45e3f1e34f42041140e7d9fef5d4b2e7ed2373e4a252aaded967878862d2fd"
+    },
+    {
+      "title": "隐藏身份桌游",
+      "scene_text": "隐藏身份桌游：请想象你和熟悉的朋友玩一局没有金钱利益的隐藏身份桌游。你抽到需要隐瞒身份的角色，规则允许误导和推理，所有人都把对抗视为游戏。请按顺序代入以下片段。",
+      "file": "illustrations/scene_021_hidden_role_game.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "29b721f663bb280466565d3e8c7a64dea3d4b9758ec6f20360bb4e23a09e1f2f"
+    },
+    {
+      "title": "观看并复述喜剧花絮",
+      "scene_text": "观看并复述喜剧花絮：请想象你和熟悉的朋友一起看一段不包含羞辱或群体攻击的拍摄花絮。演员要说一句很简单的严肃台词，却连续因为口误、道具和彼此笑场而失败。请按顺序代入以下片段。",
+      "file": "illustrations/scene_022_comedy_bloopers.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "359600e79b0921646697370e3a72d7965131b2c8b19a89a1428930006cbcb544"
+    },
+    {
+      "title": "团队项目失败后的收尾",
+      "scene_text": "团队项目失败后的收尾：请想象你和几位关系不错的同事准备了数周的提案，最终没有被选中。结果公布后，团队仍需参加简短的总结会，并与入选团队在同一空间里交流。请按顺序代入以下片段。",
+      "file": "illustrations/scene_023_project_setback.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "650765421bd4220e683662516c5db7c22e2c1f19261b55485862dff6425e7349"
+    },
+    {
+      "title": "面对爱炫耀又爱找借口的同事",
+      "scene_text": "面对爱炫耀又爱找借口的同事：请想象午休时，一位同事不断夸大自己的能力，声称团队离不开他。周围人知道他刚在一个简单任务上出错，但暂时不想把午餐变成争论。请按顺序代入以下片段。",
+      "file": "illustrations/scene_024_boastful_colleague.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "d2e629cc6589ede70bfe899e620a45da62bddf0c2e00e7be7ac9c25d0cfa4aab"
+    },
+    {
+      "title": "误以为手机丢失后又找到",
+      "scene_text": "误以为手机丢失后又找到：请想象你在咖啡店准备离开时，摸遍口袋和桌面都找不到手机。手机里有重要资料，你一时想不起最后一次使用是在店里还是路上。请按顺序代入以下片段。",
+      "file": "illustrations/scene_025_phone_found.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "31cb1bdb0866daf5ea6aaec4aefc8dccc93fab247f8073a9ffcff83d61a65154"
+    },
+    {
+      "title": "为朋友准备秘密惊喜聚会",
+      "scene_text": "为朋友准备秘密惊喜聚会：请想象你与几位朋友借用一间熟悉的房间，为一位即将到来的好友准备小型生日惊喜。对方只以为你们要普通吃饭，并已经发消息说快到门口。请按顺序代入以下片段。",
+      "file": "illustrations/scene_026_surprise_party.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "d88eb6a23edac478bfeda03ac2c40b97727e21b5c4e70595bbca8dba7f5cb8a4"
+    }
+  ]
+}

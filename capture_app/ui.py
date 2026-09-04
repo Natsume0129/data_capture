@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QSettings, Qt, QThread, Signal
+from PySide6.QtCore import QEvent, QSettings, Qt, QThread, Signal
 from PySide6.QtGui import (
     QColor,
     QCloseEvent,
+    QImageReader,
     QKeySequence,
     QPalette,
     QPainter,
@@ -495,6 +497,7 @@ class ExperimentPage(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.translator = translator
         self._image_source: QPixmap | None = None
+        self._image_path: Path | None = None
         layout = QVBoxLayout(self)
         layout.setContentsMargins(44, 28, 44, 28)
         header = QHBoxLayout()
@@ -520,8 +523,12 @@ class ExperimentPage(QWidget):
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.image_label.setMinimumHeight(220)
         self.image_label.setMaximumHeight(420)
+        self.image_label.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored
+        )
+        self.image_label.installEventFilter(self)
         self.image_label.hide()
-        layout.addWidget(self.image_label)
+        layout.addWidget(self.image_label, 1)
 
         self.text = QTextBrowser()
         self.text.setOpenExternalLinks(False)
@@ -551,6 +558,7 @@ class ExperimentPage(QWidget):
         self.advance_shortcut.setContext(
             Qt.ShortcutContext.WindowShortcut
         )
+        self.advance_shortcut.setAutoRepeat(False)
         self.advance_shortcut.activated.connect(
             lambda: self.advance_clicked.emit()
             if self.advance_button.isEnabled()
@@ -686,8 +694,14 @@ class ExperimentPage(QWidget):
 
     def _set_image(self, image_path: Path | None) -> None:
         if not image_path:
+            self._image_path = None
             self._image_source = None
+            self.image_label.clear()
             self.image_label.hide()
+            return
+        if image_path == self._image_path and self._image_source is not None:
+            self.image_label.show()
+            self._rescale_image()
             return
         pixmap = QPixmap(str(image_path))
         if pixmap.isNull():
@@ -695,6 +709,7 @@ class ExperimentPage(QWidget):
             self.image_label.hide()
             return
         self._image_source = pixmap
+        self._image_path = image_path
         self.image_label.show()
         self._rescale_image()
 
@@ -707,6 +722,11 @@ class ExperimentPage(QWidget):
                     Qt.TransformationMode.SmoothTransformation,
                 )
             )
+
+    def eventFilter(self, watched: Any, event: QEvent) -> bool:
+        if watched is self.image_label and event.type() == QEvent.Type.Resize:
+            self._rescale_image()
+        return super().eventFilter(watched, event)
 
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
@@ -973,6 +993,11 @@ class MainWindow(QMainWindow):
                 settings.target_segments,
                 settings.random_seed,
             )
+            for scene in (practice_scene, *plan.scenes):
+                if scene.image_path and not QImageReader(str(scene.image_path)).canRead():
+                    raise ValueError(
+                        self.translator.text("image_unreadable", path=scene.image_path)
+                    )
             device = self.camera.find_device(settings.camera_device_id)
             if device is None:
                 raise RuntimeError(self.translator.text("no_camera"))
@@ -1141,6 +1166,25 @@ class MainWindow(QMainWindow):
             atomic_write_json(
                 self.session_paths.session_json, self.session_payload
             )
+            # Save exactly which stimulus text and image were used in this run.
+            stimuli = []
+            for index, scene in enumerate((self.practice_scene, *self.plan.scenes)):
+                stimuli.append({
+                    "question_set_id": scene.question_set_id,
+                    "scene_id": scene.scene_id,
+                    "practice": index == 0,
+                    "scene_text": scene.text,
+                    "image_path": str(scene.image_path) if scene.image_path else "",
+                    "image_sha256": (
+                        hashlib.sha256(scene.image_path.read_bytes()).hexdigest()
+                        if scene.image_path else ""
+                    ),
+                    "segments": [
+                        {"segment_id": s.segment_id, "text": s.text, "purpose": s.purpose}
+                        for s in scene.segments
+                    ],
+                })
+            atomic_write_json(self.session_paths.root / "stimuli.json", stimuli)
             self.event_logger.write(
                 "session_started",
                 session_id=self.session_paths.session_id,
