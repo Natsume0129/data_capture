@@ -12,10 +12,26 @@ class Segment:
     ordinal: int
     text: str
     purpose: str
+    instruction: str = ""
+    utterance: str = ""
 
     @property
     def category(self) -> str:
         return self.purpose.split("｜", 1)[0].strip()
+
+    @property
+    def is_dialogue(self) -> bool:
+        return bool(self.instruction and self.utterance)
+
+    @property
+    def stimulus_format(self) -> str:
+        return "instruction_utterance" if self.is_dialogue else "legacy"
+
+    @property
+    def tts_texts(self) -> tuple[str, ...]:
+        if self.is_dialogue:
+            return (self.instruction, self.utterance)
+        return (self.text,)
 
 
 @dataclass(frozen=True)
@@ -73,4 +89,3 @@ class ExperimentSettings:
     requested_width: int
     requested_height: int
     tts: TTSSettings
-

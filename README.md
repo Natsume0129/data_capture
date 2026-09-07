@@ -1,161 +1,77 @@
-# 情景表情数据采集软件
+# Scenario Facial-Expression Capture
 
-Windows 桌面应用，用多个 CSV 问题集驱动情景式表情视频采集。软件在场景综述阶段仅开启摄像头，不录像；进入第一个片段时开始场景级录像，实验人员手动切换片段并记录时间戳，随后通过 FFmpeg 将原始视频切分为片段级 MP4。
+English | [中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-## 已实现功能
+## Use the project
 
-- PySide6 图形界面。
-- 中文、English、日本語三种界面语言；不翻译题库正文。
-- 通过 OpenCV DirectShow 自动枚举和选择摄像头，包括 GoPro Webcam 等 DirectShow 虚拟摄像头。
-- 优先选择 1920×1080、最高 30 FPS 的摄像头格式；实际格式不符时要求实验人员确认。
-- 正式实验期间隐藏自拍预览。
-- 同时选择多个问题集。
-- 场景不重复，场景内片段严格按 CSV 顺序完整执行。
-- 各问题集按已采集片段数轮流均衡抽取，并优先降低目的类别数量差异。
-- 固定随机种子，可复现实验抽样顺序。
-- 手动点击按钮或按空格切换片段；实验页会主动保持键盘焦点。
-- 屏幕正中心显示十字标定，帮助被试保持正面视线。
-- 每个正式片段持续显示“表情恢复到自然状态后再继续”的提示。
-- 正式实验前显示实验说明，并完成一个不计入正式统计的练习场景。
-- 练习场景录像单独保留，不写入正式 manifest，也不占目标片段数。
-- 每个场景保存一份无麦克风音轨的原始 MP4。
-- 增量写入时间戳事件日志和 manifest.csv。
-- 支持实验中后台切分，或实验结束后统一切分。
-- 原始视频永久保留；切分失败会写入 manifest，不会删除原始数据。
-- Google Cloud Text-to-Speech 实验前预生成 LINEAR16 WAV，实验中通过 Windows 原生音频接口完整播放本地缓存。
-- TTS 失败时由实验人员明确选择重试、无语音继续或取消，不静默降级。
-- 每个场景支持一张可选配图。
+### Requirements
 
-## 环境
-
-- Windows 10/11
+- Windows 10 or 11
 - Python 3.13
-- FFmpeg（开发机当前验证版本：8.0.1）
-- PySide6
-- OpenCV
-- cv2-enumerate-cameras
-- google-cloud-texttospeech
+- FFmpeg, either available on `PATH` or selected in the application
+- A DirectShow-compatible camera
 
-安装：
+### Install
 
-    cd D:\datacapture
-    py -3.13 -m venv .venv313
-    .\.venv313\Scripts\python.exe -m pip install -r requirements.txt
+Open PowerShell and run:
 
-启动：
+```powershell
+Set-Location "D:\datacapture"
+py -3.13 -m venv .venv313
+.\.venv313\Scripts\python.exe -m pip install --upgrade pip
+.\.venv313\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-    .\run.ps1
+If the virtual environment already exists, only run the final two commands to update it.
 
-## 问题集格式
+### Start
 
-最低要求为 UTF-8 CSV，包含“情景、问题、目的”三列。同一个“情景”连续出现的多行会被归为一个场景；“问题”行顺序就是实验中的片段顺序。程序不会修改三列文字。
+```powershell
+Set-Location "D:\datacapture"
+.\run.ps1
+```
 
-可以增加“配图”列。“配图”可以是绝对路径，也可以是相对于 CSV 文件的路径。同一场景最多使用一个不同的非空图片路径；可以只在该场景第一行填写。
+If PowerShell blocks local scripts:
 
-当前题库位于：
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File "D:\datacapture\run.ps1"
+```
 
-    D:\datacapture\question_set\笑容情景模拟实验_刺激问题库_v2_真实细化.csv
+Run the application from source for now. The packaged executable is not yet the supported launch method.
 
-同目录还提供人工翻译的英文版和日文版：
+### Run an experiment
 
-    D:\datacapture\question_set\笑容情景模拟实验_刺激问题库_v2_en.csv
-    D:\datacapture\question_set\笑容情景模拟实验_刺激问题库_v2_ja.csv
+1. Enter an anonymous participant ID.
+2. Select the save folder, target number of clips, random seed, and video-splitting mode.
+3. Select one or more CSV question sets from `question_set`.
+4. Select a camera, start the preview, and confirm framing and resolution.
+5. Optionally enable Google Cloud TTS as described below.
+6. Start the experiment. The first sampled scene is practice and is excluded from the formal manifest and target count.
+7. Read the scene overview. The camera is open, but recording has not started.
+8. Press Space to start the scene. The application records one continuous raw video for the complete scene and keeps the same image throughout that scene.
+9. Complete every item in order:
+   - Legacy sets (`情景,问题,目的,配图`): read or listen to the segment, respond naturally, return to a neutral expression, and press Space to continue.
+   - Instruction-and-utterance sets (`情景,片段序号,说明,发言,目的,配图`): the instruction is shown and spoken first. Press Space to show and play the utterance and record the clip start timestamp. Press Space again when the facial response ends; this records the end timestamp and opens the next instruction.
+10. After the last item, the scene recording stops. FFmpeg extracts formal clips from the recorded timestamps. For instruction-and-utterance sets, the final clip contains only the interval from utterance start to the second Space press.
 
-为了兼容应用，三份题库均保留中文列名“情景、问题、目的、配图”，但英文版和日文版的前三列内容已翻译。每份均包含26个场景和172个片段，配图路径相同。使用TTS时，英文版建议将文本语言代码设为 `en-US`，日文版设为 `ja-JP`；一次实验不要混选不同正文语言的题库。
+The selected save folder contains the practice video, raw scene videos, split clips, `manifest.csv`, `stimuli.json`, `session.json`, and timestamp logs. The videos contain no microphone audio. Files are created with the current user's permissions and can be deleted without administrator access.
 
-### 已关联的场景图片
+Do not select question sets in different text languages in the same TTS-enabled experiment. A single language and voice configuration applies to the entire run.
 
-此题库包含26个独立场景、172个片段，目前每行均填写了“配图”列。同一个场景的综述和所有片段共用一张图片，原有三列文字及行序未修改。
+## Configure the Google Cloud TTS API
 
-- 正式图片：question_set/illustrations/scene_001_*.png 至 scene_026_*.png。
-- 图片为人工智能生成的第一人称写实情境图，不是真实实验记录。画面以16:9横版构图生成，保留原始像素，界面等比缩放、不拉伸。
-- image_index.json 记录场景与图片的对应关系、像素尺寸和SHA-256。
-- 原CSV备份存放在 question_set/_backups，扩展名为 .csv.bak，不会作为另一套题库自动加载。
-- 保留的 sample_*.png 仅供比较，不被正式题库引用。
-- 迁移至另一台电脑时，请整体复制 question_set 目录，不能只复制CSV。
-- 应用启动前请关闭旧窗口；已经打开的窗口不会自动刷新磁盘上的题库。
+The application uses the Google Cloud Text-to-Speech Python client, generates LINEAR16 WAV files before the experiment, and plays only the local cache during collection.
 
-本次资源接入不需要增加依赖。实验开始前会检查图片是否可解码；有图时上方显示图片、下方显示正文，同一场景切换片段时复用图片。
+1. Create or select a Google Cloud project, attach billing, and enable the Cloud Text-to-Speech API. See Google's [Cloud Text-to-Speech setup guide](https://docs.cloud.google.com/text-to-speech/docs/get-started).
+2. Create a service account that is allowed to call the enabled API. See Google's [service-account creation guide](https://docs.cloud.google.com/iam/docs/service-accounts-create).
+3. Create and download a JSON key for that service account. The current application authenticates with this JSON file rather than Application Default Credentials. See Google's [service-account key guide](https://docs.cloud.google.com/iam/docs/keys-create-delete).
+4. Store the JSON outside the repository and participant-data folders. Never commit it to Git or share it with collected data.
+5. In the application, enable **Google Cloud TTS** and select the JSON file with **Service-account JSON**.
+6. Set **Text language code** to match the selected question set:
+   - Chinese: `cmn-CN`
+   - English: `en-US`
+   - Japanese: `ja-JP`
+7. Leave **Voice name** empty to let Google choose a default voice, or enter a compatible Google Cloud voice name. Set the speaking rate as required.
+8. Start the experiment. Missing audio is generated before the session begins and saved under `D:\datacapture\tts_cache`. In the new question-set format, both the instruction and the utterance receive their own cached WAV file.
 
-## 实验流程
-
-1. 输入匿名被试编号。
-2. 选择保存路径、目标片段数、随机种子和切分方式。
-3. 勾选一个或多个问题集。
-4. 选择摄像头并检查预览。
-5. 如需语音，选择 Google Cloud 服务账号 JSON，设置文本语言代码、语音名称和语速。
-6. 点击“开始实验”；软件先生成本次计划需要且缓存中不存在的 WAV。
-7. 阅读实验说明，随后完成第一个练习场景。练习过程与正式流程一致，但不计入正式数据。
-8. 查看正式场景综述。此时摄像头已开启，但没有录像。
-9. 点击“开始本场景”或按空格，开始录像并显示片段1。
-10. 当前表情结束后，等待面部恢复到自然状态，再按空格进入下一片段。
-11. 每次进入下一片段时记录前一片段结束时间和下一片段开始时间。
-12. 最后一个片段完成后停止场景录像。已经开始的场景永远完整执行。
-13. 达到目标片段数后不再抽取新场景；最终数量可以超过目标。
-14. 所有切分结束并释放文件句柄后显示完成提示，文件可由普通用户删除。
-
-## Google Cloud TTS
-
-先在 Google Cloud 项目中启用 Text-to-Speech API，并准备具有调用权限的服务账号 JSON。凭据文件不会复制到项目、会话或缓存目录；应用只通过 Windows 本地设置保存其路径。
-
-当前中文题库默认语言代码为 cmn-CN。语音名称可留空，让 API 使用该语言的默认语音。
-
-WAV 缓存位于：
-
-    D:\datacapture\tts_cache
-
-缓存键包含原文、语言代码、语音名称、语速和编码，因此配置改变后不会错误复用旧语音。
-
-## 输出
-
-    数据保存路径/
-    └─ 被试编号/
-       └─ YYYYMMDD_HHMMSS_随机后缀/
-          ├─ practice/
-          ├─ raw/
-          ├─ clips/
-          ├─ logs/
-          │  └─ events.jsonl
-          ├─ manifest.csv
-          ├─ stimuli.json
-          └─ session.json
-
-manifest.csv 每行对应一个片段，记录被试和会话编号、问题集/场景/片段 ID、未修改的三列文字、原始视频和切分视频路径、起止时间与时长、切分状态和错误信息。
-
-events.jsonl 在每次场景展示、录像开始、片段切换和录像停止时立即写盘，用于故障审计和恢复。
-
-stimuli.json 保存本次计划使用的场景原文、片段原文、目的、练习标记、图片路径和图片SHA-256，便于核对视频与刺激材料。它只记录选中的题库内容，不包含Google凭据。
-
-## 首次试采集建议
-
-先用临时被试编号 TEST001、目标片段数1、关闭TTS完成一次短流程。软件会先完整执行一个练习场景，再完整执行一个正式场景，因此正式片段数会超过1，这是保留完整场景的预期行为。确认图片正确、空格逐段前进、原始录像存在、切分视频可播放且与 manifest.csv 对应后，再开启TTS试用。
-
-本次图片接入只做资源和静态检查，没有代替操作人员进行真实摄像头录像、语音播放和完整流程验收。正式实验前仍需在测试电脑完成上述人工试采集。不要以管理员身份运行应用；保存目录应由当前用户拥有写入和删除权限。
-
-## 测试
-
-    .\.venv313\Scripts\python.exe -m pytest -q
-
-自动测试覆盖题库解析、当前正式题库规模、配图约束、多题库均衡抽样、完整场景超额停止、无重复场景、会话日志、manifest、TTS 缓存键、三语键一致性，以及真实 FFmpeg 视频切分。
-
-摄像头驱动、Google Cloud 凭据和扬声器属于硬件或外部服务集成，必须在正式采集电脑上完成一次人工试录。
-
-## 打包
-
-当前应使用 run.ps1 从源码运行。Python 3.13 + PySide6 6.11.2 的 PyInstaller 发行包在本机启动时出现 QtCore DLL 加载错误，因此现有 EXE 不作为可用交付物。根据当前决定，先绕过该打包问题；摄像头、题库和采集流程的源码开发与测试不受影响。
-
-后续重新处理 Qt 运行库打包并完成硬件试录后，再运行：
-
-    .\build_exe.ps1
-
-输出目录：
-
-    D:\datacapture\dist\ScenarioCapture
-
-脚本使用 PyInstaller onedir 模式，并将 ffmpeg.exe 和 question_set 复制到可执行文件旁。分发时必须复制整个 ScenarioCapture 文件夹，不能只复制单个 EXE。
-
-打包后的依赖自检：
-
-    $env:SCENARIO_CAPTURE_SELF_CHECK = "D:\datacapture\self_check.json"
-    .\dist\ScenarioCapture\ScenarioCapture.exe
-    Remove-Item Env:SCENARIO_CAPTURE_SELF_CHECK
+The credentials file itself is not copied into the cache or experiment output. If generation fails, the application lets the operator retry, continue without speech, or cancel the experiment.

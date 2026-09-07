@@ -539,6 +539,7 @@ class ExperimentPage(QWidget):
         self.recording_label = QLabel()
         self.recording_label.setObjectName("recordingLabel")
         controls.addWidget(self.recording_label)
+        self.recording_label.hide()
         controls.addStretch()
         self.abort_button = QPushButton()
         self.abort_button.setObjectName("dangerButton")
@@ -596,6 +597,24 @@ class ExperimentPage(QWidget):
             )
         elif self._mode == "segment":
             self.recording_label.setText(self.translator.text("recording"))
+        elif self._mode == "dialogue_instruction":
+            self.recording_label.setText(self.translator.text("recording_raw"))
+            self.recovery_hint.setText(
+                self.translator.text("dialogue_instruction_hint")
+            )
+            self.advance_button.setText(
+                self.translator.text("play_utterance")
+            )
+        elif self._mode == "dialogue_utterance":
+            self.recording_label.setText(
+                self.translator.text("recording_response")
+            )
+            self.recovery_hint.setText(
+                self.translator.text("dialogue_utterance_hint")
+            )
+            self.advance_button.setText(
+                self.translator.text("end_response")
+            )
         elif self._mode == "splitting":
             self.recording_label.clear()
 
@@ -673,6 +692,60 @@ class ExperimentPage(QWidget):
             else "next_segment"
         )
         self.advance_button.setText(self.translator.text(key))
+        self.advance_button.setEnabled(True)
+        self._set_image(scene.image_path)
+        self.crosshair.show()
+        self.crosshair.raise_()
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
+
+    def show_dialogue_instruction(
+        self, scene: Scene, index: int, practice: bool = False
+    ) -> None:
+        self._mode = "dialogue_instruction"
+        self._practice = practice
+        segment = scene.segments[index]
+        self.stage_label.setText(
+            self.translator.text(
+                "dialogue_instruction_stage",
+                current=index + 1,
+                total=len(scene.segments),
+            )
+        )
+        self.text.setPlainText(segment.instruction)
+        self.recording_label.setText(self.translator.text("recording_raw"))
+        self.recovery_hint.setText(
+            self.translator.text("dialogue_instruction_hint")
+        )
+        self.recovery_hint.show()
+        self.advance_button.setText(self.translator.text("play_utterance"))
+        self.advance_button.setEnabled(True)
+        self._set_image(scene.image_path)
+        self.crosshair.show()
+        self.crosshair.raise_()
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
+
+    def show_dialogue_utterance(
+        self, scene: Scene, index: int, practice: bool = False
+    ) -> None:
+        self._mode = "dialogue_utterance"
+        self._practice = practice
+        segment = scene.segments[index]
+        self.stage_label.setText(
+            self.translator.text(
+                "dialogue_utterance_stage",
+                current=index + 1,
+                total=len(scene.segments),
+            )
+        )
+        self.text.setPlainText(segment.utterance)
+        self.recording_label.setText(
+            self.translator.text("recording_response")
+        )
+        self.recovery_hint.setText(
+            self.translator.text("dialogue_utterance_hint")
+        )
+        self.recovery_hint.show()
+        self.advance_button.setText(self.translator.text("end_response"))
         self.advance_button.setEnabled(True)
         self._set_image(scene.image_path)
         self.crosshair.show()
@@ -792,7 +865,7 @@ class MainWindow(QMainWindow):
         self.scene_index = 0
         self.segment_index = -1
         self.captured_segments = 0
-        self.current_segment_start_ms = 0
+        self.current_segment_start_ms: int | None = None
         self.current_timings: list[SegmentTiming] = []
         self.current_raw_path: Path | None = None
         self.deferred_tasks: list[SplitTask] = []
@@ -1057,7 +1130,14 @@ class MainWindow(QMainWindow):
             text
             for scene in scenes
             if scene is not None
-            for text in [scene.text, *(item.text for item in scene.segments)]
+            for text in [
+                scene.text,
+                *(
+                    spoken
+                    for item in scene.segments
+                    for spoken in item.tts_texts
+                ),
+            ]
         ]
         self.tts_progress = QProgressDialog(
             self.translator.text("preparing_tts"),
@@ -1180,7 +1260,14 @@ class MainWindow(QMainWindow):
                         if scene.image_path else ""
                     ),
                     "segments": [
-                        {"segment_id": s.segment_id, "text": s.text, "purpose": s.purpose}
+                        {
+                            "segment_id": s.segment_id,
+                            "stimulus_format": s.stimulus_format,
+                            "text": s.text,
+                            "instruction": s.instruction,
+                            "utterance": s.utterance,
+                            "purpose": s.purpose,
+                        }
                         for s in scene.segments
                     ],
                 })
@@ -1259,6 +1346,10 @@ class MainWindow(QMainWindow):
             self._show_scene_summary()
         elif self.flow_state == "summary":
             self._start_scene_recording()
+        elif self.flow_state == "dialogue_instruction":
+            self._start_dialogue_utterance()
+        elif self.flow_state == "dialogue_utterance":
+            self._end_dialogue_utterance()
         elif (
             self.flow_state == "segment"
             and self.segment_index < len(self.current_scene.segments) - 1
@@ -1289,9 +1380,7 @@ class MainWindow(QMainWindow):
             self._camera_error(str(exc))
             return
         self.current_timings = []
-        self.current_segment_start_ms = 0
         self.segment_index = 0
-        self.flow_state = "segment"
         segment = scene.segments[0]
         self.event_logger.write(
             "recording_started",
@@ -1300,29 +1389,101 @@ class MainWindow(QMainWindow):
             raw_video=str(self.current_raw_path),
             practice=self.is_practice,
         )
+        if segment.is_dialogue:
+            self.current_segment_start_ms = None
+            self.flow_state = "dialogue_instruction"
+            self._show_dialogue_instruction()
+        else:
+            self.current_segment_start_ms = 0
+            self.flow_state = "segment"
+            self.event_logger.write(
+                "segment_started",
+                scene_id=scene.scene_id,
+                segment_id=segment.segment_id,
+                media_timestamp_ms=0,
+                practice=self.is_practice,
+            )
+            self.experiment.show_segment(
+                scene, 0, practice=self.is_practice
+            )
+            self._play_text(segment.text)
+
+    def _show_dialogue_instruction(self) -> None:
+        assert self.event_logger
+        scene = self.current_scene
+        segment = scene.segments[self.segment_index]
+        timestamp = self.camera.timestamp_ms()
+        self.event_logger.write(
+            "instruction_started",
+            scene_id=scene.scene_id,
+            segment_id=segment.segment_id,
+            media_timestamp_ms=timestamp,
+            practice=self.is_practice,
+        )
+        self.experiment.show_dialogue_instruction(
+            scene, self.segment_index, practice=self.is_practice
+        )
+        self._play_text(segment.instruction)
+
+    def _start_dialogue_utterance(self) -> None:
+        assert self.event_logger
+        scene = self.current_scene
+        segment = scene.segments[self.segment_index]
+        boundary = self.camera.timestamp_ms()
+        self.current_segment_start_ms = boundary
+        self.flow_state = "dialogue_utterance"
         self.event_logger.write(
             "segment_started",
             scene_id=scene.scene_id,
             segment_id=segment.segment_id,
-            media_timestamp_ms=0,
+            media_timestamp_ms=boundary,
             practice=self.is_practice,
         )
-        self.experiment.show_segment(
-            scene, 0, practice=self.is_practice
+        self.event_logger.write(
+            "utterance_started",
+            scene_id=scene.scene_id,
+            segment_id=segment.segment_id,
+            media_timestamp_ms=boundary,
+            practice=self.is_practice,
         )
-        self._play_text(segment.text)
+        self.experiment.show_dialogue_utterance(
+            scene, self.segment_index, practice=self.is_practice
+        )
+        self._play_text(segment.utterance)
 
-    def _next_segment(self) -> None:
-        assert self.event_logger
+    def _end_dialogue_utterance(self) -> None:
         scene = self.current_scene
         boundary = self.camera.timestamp_ms()
-        if boundary <= self.current_segment_start_ms:
+        if not self._store_current_timing(boundary):
+            return
+        self.event_logger.write(
+            "utterance_ended",
+            scene_id=scene.scene_id,
+            segment_id=scene.segments[self.segment_index].segment_id,
+            media_timestamp_ms=boundary,
+            practice=self.is_practice,
+        )
+        if self.segment_index == len(scene.segments) - 1:
+            self._finalize_scene_recording(boundary)
+            return
+        self.segment_index += 1
+        self.current_segment_start_ms = None
+        self.flow_state = "dialogue_instruction"
+        self._show_dialogue_instruction()
+
+    def _store_current_timing(self, boundary: int) -> bool:
+        assert self.event_logger
+        if (
+            self.current_segment_start_ms is None
+            or boundary <= self.current_segment_start_ms
+        ):
             QMessageBox.warning(
                 self,
                 self.translator.text("warning"),
                 self.translator.text("wait_for_timestamp"),
             )
-            return
+            return False
+        scene = self.current_scene
         current = scene.segments[self.segment_index]
         self.current_timings.append(
             SegmentTiming(
@@ -1338,6 +1499,14 @@ class MainWindow(QMainWindow):
             media_timestamp_ms=boundary,
             practice=self.is_practice,
         )
+        return True
+
+    def _next_segment(self) -> None:
+        assert self.event_logger
+        scene = self.current_scene
+        boundary = self.camera.timestamp_ms()
+        if not self._store_current_timing(boundary):
+            return
         self.segment_index += 1
         self.current_segment_start_ms = boundary
         following = scene.segments[self.segment_index]
@@ -1356,30 +1525,16 @@ class MainWindow(QMainWindow):
     def _finish_scene(self) -> None:
         assert self.event_logger and self.manifest and self.session_paths
         assert self.settings and self.current_raw_path
-        scene = self.current_scene
         boundary = self.camera.timestamp_ms()
-        if boundary <= self.current_segment_start_ms:
-            QMessageBox.warning(
-                self,
-                self.translator.text("warning"),
-                self.translator.text("wait_for_timestamp"),
-            )
+        if not self._store_current_timing(boundary):
             return
-        final_segment = scene.segments[self.segment_index]
-        self.current_timings.append(
-            SegmentTiming(
-                final_segment.segment_id,
-                self.current_segment_start_ms,
-                boundary,
-            )
-        )
-        self.event_logger.write(
-            "segment_ended",
-            scene_id=scene.scene_id,
-            segment_id=final_segment.segment_id,
-            media_timestamp_ms=boundary,
-            practice=self.is_practice,
-        )
+        self._finalize_scene_recording(boundary)
+
+    def _finalize_scene_recording(self, boundary: int) -> None:
+        assert self.event_logger and self.manifest and self.session_paths
+        assert self.settings and self.current_raw_path
+        scene = self.current_scene
+        self.audio_player.stop()
         try:
             actual_raw, recorder_duration = self.camera.stop_recording()
         except Exception as exc:
