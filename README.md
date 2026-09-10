@@ -52,6 +52,7 @@ Run the application from source for now. The packaged executable is not yet the 
 9. Complete every item in order:
    - Legacy sets (`情景,问题,目的,配图`): read or listen to the segment, respond naturally, return to a neutral expression, and press Space to continue.
    - Instruction-and-utterance sets (`情景,片段序号,说明,发言,目的,配图`): the instruction is shown and spoken first. Press Space to show and play the utterance and record the clip start timestamp. Press Space again when the facial response ends; this records the end timestamp and opens the next instruction.
+   - Compact Japanese sets (`場面,セリフ,配图`): each row is one scene and one utterance. The scene is shown and spoken as the overview; pressing Space starts recording and plays the utterance, and the next Space press ends the clip.
 10. After the last item, the scene recording stops. FFmpeg extracts formal clips from the recorded timestamps. For instruction-and-utterance sets, the final clip contains only the interval from utterance start to the second Space press.
 
 The selected save folder contains the practice video, raw scene videos, split clips, `manifest.csv`, `stimuli.json`, `session.json`, and timestamp logs. The videos contain no microphone audio. Files are created with the current user's permissions and can be deleted without administrator access.

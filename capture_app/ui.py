@@ -120,6 +120,13 @@ QTextBrowser {
 """
 
 
+TTS_LANGUAGE_BY_UI = {
+    "zh_CN": "cmn-CN",
+    "en": "en-US",
+    "ja": "ja-JP",
+}
+
+
 def default_ffmpeg_path(project_root: Path) -> str:
     bundled = project_root / "ffmpeg.exe"
     if bundled.is_file():
@@ -522,9 +529,8 @@ class ExperimentPage(QWidget):
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.image_label.setMinimumHeight(220)
-        self.image_label.setMaximumHeight(420)
         self.image_label.setSizePolicy(
-            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
         self.image_label.installEventFilter(self)
         self.image_label.hide()
@@ -533,7 +539,10 @@ class ExperimentPage(QWidget):
         self.text = QTextBrowser()
         self.text.setOpenExternalLinks(False)
         self.text.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.text.setMinimumHeight(150)
         layout.addWidget(self.text, 1)
+        layout.setStretchFactor(self.image_label, 5)
+        layout.setStretchFactor(self.text, 2)
 
         controls = QHBoxLayout()
         self.recording_label = QLabel()
@@ -631,6 +640,7 @@ class ExperimentPage(QWidget):
         self.text.setPlainText(self.translator.text("instruction_body"))
         self.recovery_hint.hide()
         self.image_label.hide()
+        self._configure_content_layout(has_image=False)
         self.advance_button.setText(
             self.translator.text("begin_practice")
         )
@@ -761,6 +771,7 @@ class ExperimentPage(QWidget):
         self.advance_button.setEnabled(False)
         self.abort_button.setEnabled(False)
         self.image_label.hide()
+        self._configure_content_layout(has_image=False)
         self.recovery_hint.hide()
         self.crosshair.hide()
         self.recording_label.clear()
@@ -771,20 +782,42 @@ class ExperimentPage(QWidget):
             self._image_source = None
             self.image_label.clear()
             self.image_label.hide()
+            self._configure_content_layout(has_image=False)
             return
         if image_path == self._image_path and self._image_source is not None:
             self.image_label.show()
+            self._configure_content_layout(has_image=True)
             self._rescale_image()
             return
         pixmap = QPixmap(str(image_path))
         if pixmap.isNull():
             self._image_source = None
             self.image_label.hide()
+            self._configure_content_layout(has_image=False)
             return
         self._image_source = pixmap
         self._image_path = image_path
         self.image_label.show()
+        self._configure_content_layout(has_image=True)
         self._rescale_image()
+
+    def _configure_content_layout(self, has_image: bool) -> None:
+        if has_image:
+            self.image_label.setMinimumHeight(300)
+            self.text.setMinimumHeight(150)
+            self.text.setMaximumHeight(230)
+            self.text.setSizePolicy(
+                QSizePolicy.Policy.Expanding,
+                QSizePolicy.Policy.Preferred,
+            )
+        else:
+            self.image_label.setMinimumHeight(0)
+            self.text.setMinimumHeight(220)
+            self.text.setMaximumHeight(16_777_215)
+            self.text.setSizePolicy(
+                QSizePolicy.Policy.Expanding,
+                QSizePolicy.Policy.Expanding,
+            )
 
     def _rescale_image(self) -> None:
         if self._image_source:
@@ -843,6 +876,7 @@ class MainWindow(QMainWindow):
             self.setup.language_combo.setCurrentIndex(language_index)
 
         self._restore_setup_settings()
+        self._sync_tts_language(self.translator.language)
         self._reset_runtime()
         self.resize(1320, 900)
         self.retranslate()
@@ -883,7 +917,15 @@ class MainWindow(QMainWindow):
     def _change_language(self, language: str) -> None:
         self.translator.set_language(language)
         self.qt_settings.setValue("ui_language", language)
+        self._sync_tts_language(self.translator.language)
         self.retranslate()
+
+    def _sync_tts_language(self, language: str) -> None:
+        language_code = TTS_LANGUAGE_BY_UI.get(language, "cmn-CN")
+        self.setup.tts_language_edit.setText(language_code)
+        voice_name = self.setup.voice_edit.text().strip()
+        if voice_name and not voice_name.startswith(language_code):
+            self.setup.voice_edit.clear()
 
     def _restore_setup_settings(self) -> None:
         saved_root = str(

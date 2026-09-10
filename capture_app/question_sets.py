@@ -12,6 +12,8 @@ from .models import QuestionSet, Scene, Segment
 BASE_COLUMNS = ("情景", "目的")
 LEGACY_COLUMN = "问题"
 DIALOGUE_COLUMNS = ("片段序号", "说明", "发言")
+COMPACT_SCENE_COLUMN = "場面"
+COMPACT_UTTERANCE_COLUMN = "セリフ"
 IMAGE_COLUMN = "配图"
 
 
@@ -44,23 +46,32 @@ def load_question_set(path: str | Path) -> QuestionSet:
     if reader.fieldnames is None:
         raise QuestionSetError(f"问题集没有表头：{csv_path.name}")
     reader.fieldnames = [name.strip() for name in reader.fieldnames]
-    missing = [name for name in BASE_COLUMNS if name not in reader.fieldnames]
-    if missing:
-        raise QuestionSetError("问题集缺少列：" + "、".join(missing))
-
     has_legacy = LEGACY_COLUMN in reader.fieldnames
     has_dialogue = all(name in reader.fieldnames for name in DIALOGUE_COLUMNS)
-    if has_legacy == has_dialogue:
+    has_compact = all(
+        name in reader.fieldnames
+        for name in (COMPACT_SCENE_COLUMN, COMPACT_UTTERANCE_COLUMN)
+    )
+    if sum((has_legacy, has_dialogue, has_compact)) != 1:
         raise QuestionSetError(
-            "问题集必须使用“情景、问题、目的”旧格式，或“情景、片段序号、说明、发言、目的”新格式"
+            "问题集必须使用“情景、问题、目的”旧格式、“情景、片段序号、说明、发言、目的”说明发言格式，或“場面、セリフ”紧凑格式"
         )
+    if not has_compact:
+        missing = [name for name in BASE_COLUMNS if name not in reader.fieldnames]
+        if missing:
+            raise QuestionSetError("问题集缺少列：" + "、".join(missing))
 
     grouped: OrderedDict[
         str, list[tuple[int, int | None, str, str, str, str]]
     ] = OrderedDict()
     for row_number, row in enumerate(reader, start=2):
-        scene_text = (row.get("情景") or "").strip()
-        purpose = (row.get("目的") or "").strip()
+        scene_text = (
+            row.get(COMPACT_SCENE_COLUMN)
+            if has_compact
+            else row.get("情景")
+        ) or ""
+        scene_text = scene_text.strip()
+        purpose = "" if has_compact else (row.get("目的") or "").strip()
         image_value = (row.get(IMAGE_COLUMN) or "").strip()
         if has_dialogue:
             instruction = (row.get("说明") or "").strip()
@@ -83,7 +94,7 @@ def load_question_set(path: str | Path) -> QuestionSet:
                 raise QuestionSetError(
                     f"第 {row_number} 行的情景、片段序号、说明、发言或目的为空或无效"
                 )
-        else:
+        elif has_legacy:
             instruction = ""
             utterance = ""
             declared_ordinal = None
@@ -91,6 +102,15 @@ def load_question_set(path: str | Path) -> QuestionSet:
             if not scene_text or not segment_text or not purpose:
                 raise QuestionSetError(
                     f"第 {row_number} 行的情景、问题或目的为空"
+                )
+        else:
+            instruction = ""
+            utterance = ""
+            declared_ordinal = None
+            segment_text = (row.get(COMPACT_UTTERANCE_COLUMN) or "").strip()
+            if not scene_text or not segment_text:
+                raise QuestionSetError(
+                    f"第 {row_number} 行的場面或セリフ为空"
                 )
         grouped.setdefault(scene_text, []).append(
             (
