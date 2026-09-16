@@ -394,15 +394,15 @@ class SetupPage(QWidget):
     def _load_default_question_sets(self) -> None:
         question_dir = self.project_root / "question_set"
         if question_dir.is_dir():
-            for path in sorted(question_dir.glob("*.csv")):
-                self._load_one_question_set(path, checked=True)
+            for path in sorted([*question_dir.glob("*.csv"), *question_dir.glob("*.json")]):
+                self._load_one_question_set(path, checked=False)
 
     def _add_question_sets(self) -> None:
         paths, _ = QFileDialog.getOpenFileNames(
             self,
             self.translator.text("add_question_set"),
             str(self.project_root / "question_set"),
-            "CSV (*.csv)",
+            "Question sets (*.csv *.json)",
         )
         for path in paths:
             self._load_one_question_set(Path(path), checked=True)
@@ -543,6 +543,15 @@ class ExperimentPage(QWidget):
         layout.addWidget(self.text, 1)
         layout.setStretchFactor(self.image_label, 5)
         layout.setStretchFactor(self.text, 2)
+        self.centered_scene_text = QLabel(self)
+        self.centered_scene_text.setTextFormat(Qt.TextFormat.PlainText)
+        self.centered_scene_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.centered_scene_text.setWordWrap(True)
+        self.centered_scene_text.setStyleSheet(
+            "background: white; color: #0f172a; font-size: 22px;"
+            "border-radius: 12px; padding: 24px;"
+        )
+        self.centered_scene_text.hide()
 
         controls = QHBoxLayout()
         self.recording_label = QLabel()
@@ -628,6 +637,8 @@ class ExperimentPage(QWidget):
             self.recording_label.clear()
 
     def show_instructions(self) -> None:
+        self.centered_scene_text.hide()
+        self.text.show()
         self._mode = "instructions"
         self._practice = True
         self.stage_label.setText(
@@ -666,6 +677,7 @@ class ExperimentPage(QWidget):
         )
 
     def show_scene_summary(self, scene: Scene, practice: bool = False) -> None:
+        self.text.show()
         self._mode = "summary"
         self._practice = practice
         self.stage_label.setText(
@@ -674,12 +686,25 @@ class ExperimentPage(QWidget):
             )
         )
         self.text.setPlainText(scene.text)
+        self.text.hide()
+        self.centered_scene_text.setText(scene.text)
+        self._position_scene_text()
+        self.centered_scene_text.show()
+        self.centered_scene_text.raise_()
         self.recovery_hint.hide()
         self.advance_button.setText(self.translator.text("start_scene"))
         self.advance_button.setEnabled(True)
         self.abort_button.setEnabled(True)
         self.recording_label.setText(self.translator.text("not_recording"))
-        self._set_image(scene.image_path)
+        if scene.segments[0].image_caption:
+            # Decode in advance without revealing the stimulus before recording.
+            self._image_path = scene.image_path
+            self._image_source = QPixmap(str(scene.image_path))
+            self.image_label.clear()
+            self.image_label.hide()
+            self._configure_content_layout(has_image=False)
+        else:
+            self._set_image(scene.image_path)
         self.crosshair.show()
         self.crosshair.raise_()
         self.setFocus(Qt.FocusReason.OtherFocusReason)
@@ -688,6 +713,7 @@ class ExperimentPage(QWidget):
         self, scene: Scene, index: int, practice: bool = False
     ) -> None:
         self._mode = "segment"
+        self.centered_scene_text.hide()
         self._practice = practice
         segment = scene.segments[index]
         self.stage_label.setText(
@@ -704,6 +730,15 @@ class ExperimentPage(QWidget):
         self.advance_button.setText(self.translator.text(key))
         self.advance_button.setEnabled(True)
         self._set_image(scene.image_path)
+        self.text.setVisible(not segment.image_caption)
+        if segment.image_caption:
+            self.stage_label.setText(self.translator.text("picture_stimulus"))
+            self.recovery_hint.setText(self.translator.text("dialogue_utterance_hint"))
+        else:
+            self.recovery_hint.setText(
+                self.translator.text("recovery_hint") + "\n"
+                + self.translator.text("space_hint")
+            )
         self.crosshair.show()
         self.crosshair.raise_()
         self.setFocus(Qt.FocusReason.OtherFocusReason)
@@ -712,6 +747,8 @@ class ExperimentPage(QWidget):
         self, scene: Scene, index: int, practice: bool = False
     ) -> None:
         self._mode = "dialogue_instruction"
+        self.centered_scene_text.hide()
+        self.text.show()
         self._practice = practice
         segment = scene.segments[index]
         self.stage_label.setText(
@@ -738,6 +775,8 @@ class ExperimentPage(QWidget):
         self, scene: Scene, index: int, practice: bool = False
     ) -> None:
         self._mode = "dialogue_utterance"
+        self.centered_scene_text.hide()
+        self.text.show()
         self._practice = practice
         segment = scene.segments[index]
         self.stage_label.setText(
@@ -763,6 +802,8 @@ class ExperimentPage(QWidget):
         self.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def show_splitting(self, done: int, total: int) -> None:
+        self.centered_scene_text.hide()
+        self.text.show()
         self._mode = "splitting"
         self.stage_label.setText(self.translator.text("experiment_complete"))
         self.text.setPlainText(
@@ -834,8 +875,20 @@ class ExperimentPage(QWidget):
             self._rescale_image()
         return super().eventFilter(watched, event)
 
+    def _position_scene_text(self) -> None:
+        width = max(200, self.width() - 88)
+        self.centered_scene_text.setFixedWidth(width)
+        height = max(180, self.centered_scene_text.sizeHint().height())
+        self.centered_scene_text.setGeometry(
+            (self.width() - width) // 2,
+            (self.height() - height) // 2,
+            width,
+            height,
+        )
+
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
+        self._position_scene_text()
         self._rescale_image()
         self.crosshair.move(
             (self.width() - self.crosshair.width()) // 2,
@@ -1296,6 +1349,8 @@ class MainWindow(QMainWindow):
                     "scene_id": scene.scene_id,
                     "practice": index == 0,
                     "scene_text": scene.text,
+                    "scenario_description": scene.scenario_description,
+                    "image_prompt": scene.image_prompt,
                     "image_path": str(scene.image_path) if scene.image_path else "",
                     "image_sha256": (
                         hashlib.sha256(scene.image_path.read_bytes()).hexdigest()
@@ -1436,19 +1491,23 @@ class MainWindow(QMainWindow):
             self.flow_state = "dialogue_instruction"
             self._show_dialogue_instruction()
         else:
-            self.current_segment_start_ms = 0
-            self.flow_state = "segment"
-            self.event_logger.write(
-                "segment_started",
-                scene_id=scene.scene_id,
-                segment_id=segment.segment_id,
-                media_timestamp_ms=0,
-                practice=self.is_practice,
+            self.current_segment_start_ms = (
+                self.camera.timestamp_ms() if segment.image_caption else 0
             )
+            self.flow_state = "segment"
+            if segment.image_caption:
+                self.audio_player.stop()
             self.experiment.show_segment(
                 scene, 0, practice=self.is_practice
             )
             self._play_text(segment.text)
+            self.event_logger.write(
+                "segment_started",
+                scene_id=scene.scene_id,
+                segment_id=segment.segment_id,
+                media_timestamp_ms=self.current_segment_start_ms,
+                practice=self.is_practice,
+            )
 
     def _show_dialogue_instruction(self) -> None:
         assert self.event_logger

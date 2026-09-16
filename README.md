@@ -4,6 +4,13 @@ English | [中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 ## Use the project
 
+The Japanese daily-life picture set is `question_set/japan_daily_speech_bubbles.json`.
+Each entry stores a scenario, a Japanese line, source and generation prompts, and an image path.
+Select this set and use Japanese (`ja-JP`) for TTS. The overview shows only a short introduction.
+Press Space to reveal the large picture with its embedded speech bubble and start the response interval;
+press Space again when the response ends. Images are loaded locally before presentation.
+The usual practice-scene rule applies: selecting only this five-scene set yields one practice scene and at most four formal clips.
+
 ### Requirements
 
 - Windows 10 or 11

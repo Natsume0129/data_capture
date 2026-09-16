@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import io
+import json
 from collections import OrderedDict
 from pathlib import Path
 
@@ -41,6 +42,9 @@ def load_question_set(path: str | Path) -> QuestionSet:
         text = raw.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise QuestionSetError(f"问题集必须使用 UTF-8 编码：{csv_path.name}") from exc
+
+    if csv_path.suffix.lower() == ".json":
+        return _load_image_caption_set(csv_path, raw, text)
 
     reader = csv.DictReader(io.StringIO(text))
     if reader.fieldnames is None:
@@ -190,6 +194,46 @@ def load_question_set(path: str | Path) -> QuestionSet:
         path=csv_path,
         scenes=tuple(scenes),
     )
+
+
+def _load_image_caption_set(path: Path, raw: bytes, text: str) -> QuestionSet:
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise QuestionSetError(f"题库 JSON 无效：{exc}") from exc
+    if not isinstance(payload, dict) or payload.get("format") != "image_caption_v1":
+        raise QuestionSetError("图片台词题库的 format 必须是 image_caption_v1")
+    entries = payload.get("scenes")
+    if not isinstance(entries, list) or not entries:
+        raise QuestionSetError("图片台词题库必须包含非空 scenes 列表")
+    name = payload.get("name")
+    if not isinstance(name, str) or not name.strip():
+        raise QuestionSetError("图片台词题库必须包含 name")
+    question_set_id = "qs_" + hashlib.sha256(raw).hexdigest()[:12]
+    scenes = []
+    seen = set()
+    for index, entry in enumerate(entries, 1):
+        if not isinstance(entry, dict):
+            raise QuestionSetError(f"第 {index} 个场景必须是对象")
+        for field in ("id", "overview", "scenario", "line", "image", "prompt"):
+            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                raise QuestionSetError(f"第 {index} 个场景缺少 {field}")
+        scene_id = entry["id"]
+        if not all(c.isascii() and (c.isalnum() or c in "_-") for c in scene_id):
+            raise QuestionSetError(f"场景 id 只能使用英文字母、数字、下划线和连字符：{scene_id}")
+        if scene_id in seen:
+            raise QuestionSetError(f"重复场景 id：{scene_id}")
+        seen.add(scene_id)
+        segment = Segment(
+            question_set_id, scene_id, "P001", 1, entry["line"], "",
+            utterance=entry["line"], image_caption=True,
+        )
+        scenes.append(Scene(
+            question_set_id, name, scene_id, index, entry["overview"],
+            (segment,), _resolve_image(path, entry["image"]),
+            image_prompt=entry["prompt"], scenario_description=entry["scenario"],
+        ))
+    return QuestionSet(question_set_id, name, path, tuple(scenes))
 
 
 def load_question_sets(paths: list[str | Path]) -> list[QuestionSet]:

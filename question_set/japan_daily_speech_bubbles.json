@@ -1,0 +1,54 @@
+{
+  "format": "image_caption_v1",
+  "name": "日本の日常・画像とセリフ（5場面）",
+  "language": "ja-JP",
+  "source": "项目问题总结与修改方案 - Google Gemini.pdf, final reply, pages 15–16",
+  "image_style": "Photorealistic Japanese everyday life with one readable Japanese speech bubble, 16:9 landscape. The depicted person is the character, not the participant.",
+  "scenes": [
+    {
+      "id": "daily_001_gate",
+      "overview": "朝の通勤ラッシュ時、改札を通ろうとしたところ、交通系ICカードの残高不足でゲートに止められ、後ろに人が並ぶ中、気まずそうにその場で立ち止まっている。",
+      "scenario": "朝の通勤ラッシュ時、改札を通ろうとしたところ、交通系ICカードの残高不足でゲートに止められ、後ろに人が並ぶ中、気まずそうにその場で立ち止まっている。",
+      "line": "えっ、嘘…",
+      "image": "illustrations/japan_daily_bubbles/daily_001_gate.png",
+      "source_prompt": "A photorealistic shot of a young adult at a Japanese train station ticket gate. A red error light is flashing and the gate barriers are closed. The person has a panicked, apologetic expression. Right next to the person's head is a clean white speech bubble containing the exact Japanese text \"えっ、嘘...\". Highly detailed, candid street photography, realistic Japanese everyday life.",
+      "prompt": "Photorealistic single-panel Japanese everyday-life scene, 16:9 landscape. Morning rush hour at an unmistakably Japanese automatic railway ticket gate: compact blue-grey gate units, IC card reader, closed red paddle barriers, tactile yellow paving, commuters queuing behind. An ordinary young Japanese adult has just tapped an IC card and been stopped, turns back slightly toward the waiting queue with a small startled apologetic expression, no forced bitter smile. Clearly readable display on the gate says 残額不足. Make the closed gate and reader visually obvious and physically plausible. Eye-level side three-quarter view shows the character, gate and short queue in one instantly understandable composition. Natural station lighting, everyday clothing, realistic proportions and skin, no fashion model styling. One large clean white speech bubble with black outline near the character's head, tail clearly points to that character, containing exactly えっ、嘘… in bold readable Japanese. No other captions, logos or watermark. Do not show an extreme emotional performance."
+    },
+    {
+      "id": "daily_002_bento",
+      "overview": "夜の日本のスーパーの惣菜売り場で、少し高めの弁当を見ながら、値引きシール用の機械を持って近づいてくる店員を横目で確認し、何気ないふりをして値下げを待っている。",
+      "scenario": "夜の日本のスーパーの惣菜売り場で、少し高めの弁当を見ながら、値引きシール用の機械を持って近づいてくる店員を横目で確認し、何気ないふりをして値下げを待っている。",
+      "line": "半額…",
+      "image": "illustrations/japan_daily_bubbles/daily_002_bento.png",
+      "source_prompt": "A cinematic, realistic photo inside a Japanese supermarket at night. A young person is looking sideways at a bento box with an expectant expression. In the blurred background, a staff member holds a discount sticker gun. Floating near the person is a clear white speech bubble containing the exact Japanese text \"半額...\". Warm indoor lighting, slice of life.",
+      "prompt": "Photorealistic first-person POV Japanese everyday-life scene, 16:9 landscape. The viewer is standing in the evening deli aisle of a modest Japanese neighborhood supermarket. Directly ahead is a waist-height refrigerated shelf filled with clear-lidded black trays of rice, karaage and grilled-fish bentos; one slightly premium bento is centered as the viewer's focus. Show only the viewer's natural hands at the lower edge: one hand loosely holding a small shopping basket while the other pauses near the premium bento, pretending to examine it casually. In the middle distance, an apron-wearing employee is clearly approaching the shelf with a handheld discount-label dispenser and visible red-yellow stickers that read 半額. The spatial relationship between the bento, the waiting viewer and the approaching employee must be immediately understandable. Dark windows indicate nighttime; realistic fluorescent supermarket lighting and ordinary Japanese daily life. One large clean white speech bubble with a black outline in the upper part of the image; its tail points toward the lower edge/camera viewpoint to represent the viewer's own words. The bubble contains the exact bold Japanese text 半額…. Do not show the viewer's face, body, hair, shadow or reflection. No other customer as the main subject, no extra captions, logos or watermark."
+    },
+    {
+      "id": "daily_003_umbrellas",
+      "overview": "雨の日にコンビニを出ると、入口の傘立てには同じような透明ビニール傘がぎっしり並んでいる。手を伸ばしかけたまま、自分の傘がどれなのかまったく分からなくなっている。",
+      "scenario": "雨の日にコンビニを出ると、入口の傘立てには同じような透明ビニール傘がぎっしり並んでいる。手を伸ばしかけたまま、自分の傘がどれなのかまったく分からなくなっている。",
+      "line": "どれだっけ？",
+      "image": "illustrations/japan_daily_bubbles/daily_003_umbrellas.png",
+      "source_prompt": "A realistic photo outside a Japanese convenience store on a rainy day. A person stands in front of an umbrella stand filled with completely identical transparent vinyl umbrellas, hand hovering in the air. They look confused. Above them is a white comic-style speech bubble containing the exact Japanese text \"どれだっけ？\". Wet pavement, neon glow.",
+      "prompt": "Photorealistic first-person POV Japanese everyday-life scene, 16:9 landscape. The viewer has just stepped out through the glass sliding entrance of a small Japanese convenience store on a rainy afternoon. Directly in front of the viewer is a realistic metal umbrella rack containing eight or ten CLOSED transparent vinyl umbrellas with nearly identical white curved handles, each folded separately. Show only the viewer's natural right hand entering from the lower edge and hovering uncertainly above the identical handles, about to choose one; a small convenience-store shopping bag may be visible in the other hand at the bottom edge. The repeated handles, uncertain hand gesture and rain-soaked entrance must make it immediately clear that the viewer cannot remember which umbrella is theirs. Wet tiled pavement, visible raindrops, umbrella drip tray and bright unbranded store shelves behind the glass. Natural eye-level human viewpoint, realistic scale and depth. One large clean white speech bubble with a black outline in the upper part of the image; its tail points toward the lower edge/camera viewpoint to represent the viewer's own words. The bubble contains the exact bold Japanese text どれだっけ？. Do not show the viewer's face, body, hair, shadow or reflection. No other people as the main subject, no extra captions, logos or watermark."
+    },
+    {
+      "id": "daily_004_elevator",
+      "overview": "客先訪問を終えてエレベーターに乗ったところ、扉が半分閉まりかけても、乗っている人は廊下の取引先に向かって営業スマイルを保ち、深くお辞儀を続けている。",
+      "scenario": "客先訪問を終えてエレベーターに乗ったところ、扉が半分閉まりかけても、乗っている人は廊下の取引先に向かって営業スマイルを保ち、深くお辞儀を続けている。",
+      "line": "よろしくお願い…",
+      "image": "illustrations/japan_daily_bubbles/daily_004_elevator.png",
+      "source_prompt": "A photorealistic corporate shot inside a modern office elevator in Japan. A business person in a suit is holding a deep bow with a strained professional smile as the metal doors slowly close. Beside them is a white speech bubble with the exact Japanese text \"よろしくお願い...\". Sharp focus, tension of Japanese business etiquette.",
+      "prompt": "Photorealistic first-person POV Japanese everyday-life scene, 16:9 landscape. The viewer is inside a compact modern Japanese office elevator after visiting a client. The camera is at natural eye level but tilted slightly downward because the viewer is bowing. Stainless-steel elevator doors are partway closing from both sides, leaving a physically plausible central opening. Through that opening, a Japanese client in an ordinary business suit stands in the hallway and returns a deep polite bow toward the viewer. At the lower edge, show only one of the viewer's hands holding the handle of a slim business bag; no other part of the viewer is visible. Clearly distinguish the elevator interior from the office hallway and make the mutual farewell bow immediately understandable. Natural office lighting, realistic scale and restrained professional etiquette rather than comedy. One large clean white speech bubble with a black outline in the upper clear space; its tail points toward the lower edge/camera viewpoint to represent the viewer's own words. The bubble contains the exact bold Japanese text よろしくお願い…. Do not show the viewer's face, body, hair, shadow or reflection. No extra captions, logos or watermark."
+    },
+    {
+      "id": "daily_005_garbage",
+      "overview": "朝、分別済みの透明なごみ袋を両手に持って急いで階下へ降りたが、青いカラスよけネットの下はすでに空で、遠くではごみ収集車が走り去ったばかり。人物はその場で立ち尽くしている。",
+      "scenario": "朝、分別済みの透明なごみ袋を両手に持って急いで階下へ降りたが、青いカラスよけネットの下はすでに空で、遠くではごみ収集車が走り去ったばかり。人物はその場で立ち尽くしている。",
+      "line": "最悪…",
+      "image": "illustrations/japan_daily_bubbles/daily_005_garbage.png",
+      "source_prompt": "A realistic morning shot in a Japanese neighborhood. A person holding two clear plastic garbage bags stands completely frozen with a devastated expression in front of an empty blue anti-crow net. A garbage truck is driving away in the background. A sharp white speech bubble appears next to them with the exact Japanese text \"最悪...\". Natural sunlight.",
+      "prompt": "Photorealistic first-person POV Japanese everyday-life scene, 16:9 landscape. The viewer has just rushed downstairs on a clear morning in a narrow Japanese residential street with modest houses, concrete walls, utility poles and an apartment entrance. Show the viewer's two natural hands at the lower left and lower right, each holding a tied translucent rubbish bag containing visibly sorted household waste. Directly ahead is an EMPTY curbside collection point with a collapsed blue anti-crow mesh net and clearly no rubbish beneath it. Farther down the same street, a compact blue-and-white Japanese refuse truck is driving away with its rear loading mechanism facing the viewer. The two bags, empty blue net and departing truck must all be clearly readable in one instantly understandable composition. Natural eye-level viewpoint, realistic morning sunlight, ordinary Japanese neighborhood and realistic scale. One large clean white speech bubble with a black outline in the upper part of the image; its tail points toward the lower edge/camera viewpoint to represent the viewer's own words. The bubble contains the exact bold Japanese text 最悪…. Do not show the viewer's face, body, hair, shadow or reflection. No extra captions, logos or watermark."
+    }
+  ]
+}
