@@ -15,6 +15,7 @@ class Segment:
     instruction: str = ""
     utterance: str = ""
     image_caption: bool = False
+    scene_dialogue: bool = False
 
     @property
     def category(self) -> str:
@@ -28,6 +29,8 @@ class Segment:
     def stimulus_format(self) -> str:
         if self.image_caption:
             return "image_caption"
+        if self.scene_dialogue:
+            return "scene_dialogue"
         return "instruction_utterance" if self.is_dialogue else "legacy"
 
     @property
@@ -48,6 +51,7 @@ class Scene:
     image_path: Path | None = None
     image_prompt: str = ""
     scenario_description: str = ""
+    hide_image_in_summary: bool = False
 
 
 @dataclass(frozen=True)

@@ -696,7 +696,7 @@ class ExperimentPage(QWidget):
         self.advance_button.setEnabled(True)
         self.abort_button.setEnabled(True)
         self.recording_label.setText(self.translator.text("not_recording"))
-        if scene.segments[0].image_caption:
+        if scene.hide_image_in_summary:
             # Decode in advance without revealing the stimulus before recording.
             self._image_path = scene.image_path
             self._image_source = QPixmap(str(scene.image_path))
@@ -716,9 +716,18 @@ class ExperimentPage(QWidget):
         self.centered_scene_text.hide()
         self._practice = practice
         segment = scene.segments[index]
-        self.stage_label.setText(
-            f"{segment.segment_id}  ·  {index + 1}/{len(scene.segments)}"
-        )
+        if segment.scene_dialogue:
+            self.stage_label.setText(
+                self.translator.text(
+                    "dialogue_utterance_stage",
+                    current=index + 1,
+                    total=len(scene.segments),
+                )
+            )
+        else:
+            self.stage_label.setText(
+                f"{segment.segment_id}  ·  {index + 1}/{len(scene.segments)}"
+            )
         self.text.setPlainText(segment.text)
         self.recording_label.setText(self.translator.text("recording"))
         self.recovery_hint.show()
@@ -733,6 +742,8 @@ class ExperimentPage(QWidget):
         self.text.setVisible(not segment.image_caption)
         if segment.image_caption:
             self.stage_label.setText(self.translator.text("picture_stimulus"))
+            self.recovery_hint.setText(self.translator.text("dialogue_utterance_hint"))
+        elif segment.scene_dialogue:
             self.recovery_hint.setText(self.translator.text("dialogue_utterance_hint"))
         else:
             self.recovery_hint.setText(
@@ -1492,10 +1503,12 @@ class MainWindow(QMainWindow):
             self._show_dialogue_instruction()
         else:
             self.current_segment_start_ms = (
-                self.camera.timestamp_ms() if segment.image_caption else 0
+                self.camera.timestamp_ms()
+                if segment.image_caption or segment.scene_dialogue
+                else 0
             )
             self.flow_state = "segment"
-            if segment.image_caption:
+            if segment.image_caption or segment.scene_dialogue:
                 self.audio_player.stop()
             self.experiment.show_segment(
                 scene, 0, practice=self.is_practice

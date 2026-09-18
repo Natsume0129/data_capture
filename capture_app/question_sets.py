@@ -44,7 +44,7 @@ def load_question_set(path: str | Path) -> QuestionSet:
         raise QuestionSetError(f"问题集必须使用 UTF-8 编码：{csv_path.name}") from exc
 
     if csv_path.suffix.lower() == ".json":
-        return _load_image_caption_set(csv_path, raw, text)
+        return _load_json_question_set(csv_path, raw, text)
 
     reader = csv.DictReader(io.StringIO(text))
     if reader.fieldnames is None:
@@ -196,13 +196,19 @@ def load_question_set(path: str | Path) -> QuestionSet:
     )
 
 
-def _load_image_caption_set(path: Path, raw: bytes, text: str) -> QuestionSet:
+def _load_json_question_set(path: Path, raw: bytes, text: str) -> QuestionSet:
     try:
         payload = json.loads(text)
     except json.JSONDecodeError as exc:
         raise QuestionSetError(f"题库 JSON 无效：{exc}") from exc
-    if not isinstance(payload, dict) or payload.get("format") != "image_caption_v1":
-        raise QuestionSetError("图片台词题库的 format 必须是 image_caption_v1")
+    if not isinstance(payload, dict):
+        raise QuestionSetError("题库 JSON 顶层必须是对象")
+    if payload.get("format") == "scene_dialogue_v1":
+        return _load_scene_dialogue_set(path, raw, payload)
+    if payload.get("format") != "image_caption_v1":
+        raise QuestionSetError(
+            "JSON 题库的 format 必须是 image_caption_v1 或 scene_dialogue_v1"
+        )
     entries = payload.get("scenes")
     if not isinstance(entries, list) or not entries:
         raise QuestionSetError("图片台词题库必须包含非空 scenes 列表")
@@ -232,8 +238,74 @@ def _load_image_caption_set(path: Path, raw: bytes, text: str) -> QuestionSet:
             question_set_id, name, scene_id, index, entry["overview"],
             (segment,), _resolve_image(path, entry["image"]),
             image_prompt=entry["prompt"], scenario_description=entry["scenario"],
+            hide_image_in_summary=True,
         ))
     return QuestionSet(question_set_id, name, path, tuple(scenes))
+
+
+def _load_scene_dialogue_set(
+    path: Path, raw: bytes, payload: dict[str, object]
+) -> QuestionSet:
+    name = payload.get("name")
+    entries = payload.get("scenes")
+    if not isinstance(name, str) or not name.strip():
+        raise QuestionSetError("连续台词题库必须包含 name")
+    if not isinstance(entries, list) or not entries:
+        raise QuestionSetError("连续台词题库必须包含非空 scenes 列表")
+    question_set_id = "qs_" + hashlib.sha256(raw).hexdigest()[:12]
+    scenes: list[Scene] = []
+    seen: set[str] = set()
+    for scene_ordinal, entry in enumerate(entries, start=1):
+        if not isinstance(entry, dict):
+            raise QuestionSetError(f"第 {scene_ordinal} 个场景必须是对象")
+        for field in ("id", "overview", "image", "purpose"):
+            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                raise QuestionSetError(f"第 {scene_ordinal} 个场景缺少 {field}")
+        scene_id = entry["id"]
+        if not all(c.isascii() and (c.isalnum() or c in "_-") for c in scene_id):
+            raise QuestionSetError(
+                f"场景 id 只能使用英文字母、数字、下划线和连字符：{scene_id}"
+            )
+        if scene_id in seen:
+            raise QuestionSetError(f"重复场景 id：{scene_id}")
+        seen.add(scene_id)
+        dialogue_texts = entry.get("dialogues")
+        if (
+            not isinstance(dialogue_texts, list)
+            or not dialogue_texts
+            or any(not isinstance(item, str) or not item.strip() for item in dialogue_texts)
+        ):
+            raise QuestionSetError(
+                f"第 {scene_ordinal} 个场景的 dialogues 必须是非空字符串列表"
+            )
+        purpose = entry["purpose"].strip()
+        segments = tuple(
+            Segment(
+                question_set_id=question_set_id,
+                scene_id=scene_id,
+                segment_id=f"P{segment_ordinal:03d}",
+                ordinal=segment_ordinal,
+                text=dialogue.strip(),
+                purpose=purpose,
+                utterance=dialogue.strip(),
+                scene_dialogue=True,
+            )
+            for segment_ordinal, dialogue in enumerate(dialogue_texts, start=1)
+        )
+        scenes.append(
+            Scene(
+                question_set_id=question_set_id,
+                question_set_name=name.strip(),
+                scene_id=scene_id,
+                ordinal=scene_ordinal,
+                text=entry["overview"].strip(),
+                segments=segments,
+                image_path=_resolve_image(path, entry["image"]),
+                scenario_description=entry["overview"].strip(),
+                hide_image_in_summary=True,
+            )
+        )
+    return QuestionSet(question_set_id, name.strip(), path, tuple(scenes))
 
 
 def load_question_sets(paths: list[str | Path]) -> list[QuestionSet]:

@@ -1,0 +1,124 @@
+{
+  "format": "dialogue_design_v1",
+  "language": "ja-JP",
+  "description": "9つの場面に対する、日常会話に近い5段階の日本語台詞案。",
+  "scenes": [
+    {
+      "id": "scenario_001_blue_ring_takoyaki",
+      "title": "ヒョウモンダコのたこ焼き",
+      "background": "友人が焼きたてのたこ焼きを差し出している。使ったタコの触手には青い輪が見える。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_001_blue_ring_takoyaki.png",
+      "dialogues": [
+        "焼きたてだよ。よかったら一つ食べてみて。",
+        "市場で珍しいタコが売っていて、つい買ってしまったんだ。",
+        "でも、この青い輪っか……ちょっと変じゃない？",
+        "待って。念のため調べるから、まだ食べないで。",
+        "これ、ヒョウモンダコかもしれない。触らずに、お店へ連絡しよう。"
+      ]
+    },
+    {
+      "id": "scenario_002_glowing_mushroom_tempura",
+      "title": "青く光るキノコの天ぷら",
+      "background": "キャンプ場で、友人が近くで採ったキノコを天ぷらにした。衣の中から青い光が見える。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_002_glowing_mushroom_tempura.png",
+      "dialogues": [
+        "天ぷらが揚がったよ。熱いうちにどうぞ。",
+        "このキノコ、さっきキャンプ場の近くで見つけたんだ。",
+        "中が青く光ってるけど、こんなキノコだったかな。",
+        "ちょっと待って。種類が分からないものは食べない方がいいね。",
+        "これは片づけて、管理人さんに確認しよう。"
+      ]
+    },
+    {
+      "id": "scenario_003_jigokudani_boiling_spring",
+      "title": "地獄谷の沸騰する泉",
+      "background": "登別地獄谷で、友人が激しく沸騰する泉を指している。周囲には硫黄の蒸気が立ち込めている。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_003_jigokudani_boiling_spring.png",
+      "dialogues": [
+        "すごい湯気だね。天然の温泉みたい。",
+        "でも、ずっと激しく沸いてる。かなり熱そうだよ。",
+        "向こうに注意書きがあるね。先に見てくる。",
+        "ここは入浴できない場所みたい。下りないで。",
+        "せっかくだし、このあと近くのちゃんとした温泉へ行こう。"
+      ]
+    },
+    {
+      "id": "scenario_004_hokkaido_brown_bear",
+      "title": "北海道の野生のヒグマ",
+      "background": "北海道の雪林で大きな野生のヒグマに遭遇した。友人は唐揚げの箱を持っている。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_004_hokkaido_brown_bear.png",
+      "dialogues": [
+        "待って、あそこにいるの、熊じゃない？",
+        "こっちを見てる。食べ物は出さない方がいい。",
+        "走らないで、ゆっくり後ろへ下がろう。",
+        "この唐揚げも袋にしまうね。",
+        "安全な場所まで戻って、管理の人に連絡しよう。"
+      ]
+    },
+    {
+      "id": "scenario_005_giant_hornet_nest",
+      "title": "オオスズメバチの巣",
+      "background": "森の中で、大きな蜂の巣と、その周囲を飛ぶオオスズメバチを見つけた。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_005_giant_hornet_nest.png",
+      "dialogues": [
+        "木のところに大きな巣があるね。",
+        "飛んでる蜂、普通の蜂よりかなり大きくない？",
+        "スズメバチかもしれない。近づかない方がいい。",
+        "刺激しないように、静かに離れよう。",
+        "場所を覚えておいて、管理の人に知らせよう。"
+      ]
+    },
+    {
+      "id": "scenario_006_plastic_bag_skydiving",
+      "title": "高空とコンビニのビニール袋",
+      "background": "高度約3000メートルの上空で、友人が大きなビニール袋を広げている。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_006_plastic_bag_skydiving.png",
+      "dialogues": [
+        "もうすぐ私たちの番だね。緊張してる？",
+        "ちょっと待って。君のパラシュートはどこ？",
+        "そのコンビニの袋しか持ってないの？",
+        "それじゃ無理だよ。絶対に飛ばないで。",
+        "いったん中に戻って、教官と装備を確認しよう。"
+      ]
+    },
+    {
+      "id": "scenario_007_wet_fork_electrical_box",
+      "title": "火花が出る電気箱と濡れたフォーク",
+      "background": "自宅が停電し、開いた電気箱から火花が出ている。友人は濡れた金属製のフォークを持っている。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_007_wet_fork_electrical_box.png",
+      "dialogues": [
+        "急に停電したね。そっちも全部消えてる？",
+        "電気箱から火花が出てる。近づかないで。",
+        "そのフォークで触るのは絶対にやめて。",
+        "自分たちでは触らないで、まず部屋から離れよう。",
+        "管理会社と電気業者に連絡するね。"
+      ]
+    },
+    {
+      "id": "scenario_008_izakaya_social",
+      "title": "居酒屋で久しぶりの友人と飲む",
+      "background": "居酒屋で、久しぶりに会った友人が酒の入ったグラスを上げ、こちらを見ながら話している。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_008_izakaya_social.png",
+      "dialogues": [
+        "ほら、今日は久しぶりだし、ゆっくり飲もうよ。",
+        "ここの名物、けっこう有名なんだって。食べてみて。",
+        "最近どう？元気にしてた？",
+        "あ、ちょっと酔ってきたかも。",
+        "実は今日、財布を忘れちゃって……悪いけど、払ってもらってもいい？"
+      ]
+    },
+    {
+      "id": "scenario_009_shinkansen_umbrella",
+      "title": "新幹線ホームに落ちたイヤホン",
+      "background": "新幹線のホームで友人のイヤホンが線路へ落ちた。友人は透明な傘を手にしている。",
+      "image": "../illustrations/absurd_danger_scenarios/scenario_009_shinkansen_umbrella.png",
+      "dialogues": [
+        "あ、イヤホンが線路に落ちちゃった。傘で届くかな？",
+        "でも、新幹線が来る音がするね。",
+        "やっぱり危ないから、ここから離れよう。",
+        "駅員さんに相談して、取ってもらえるか聞いてみる。",
+        "取れなくても仕方ないよ。安全の方が大事だから。"
+      ]
+    }
+  ]
+}
