@@ -1,0 +1,951 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑与社交表情情景题库·中文整合版（55个场景）",
+  "language": "cmn-CN",
+  "translation_source": "combined_all_smile_scenarios_55_ja.json",
+  "translation_note": "场景编号、图片路径、台词数量及顺序与日语版一致；老师原始日语台词保存在 source_line_original_ja。日语谐音及专有词的处理在相关场景的 translation_note 中注明。",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常苦笑与老师示例（35个场景）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常苦笑与社交笑（20个场景）",
+      "scene_count": 20
+    }
+  ],
+  "scenes": [
+    {
+      "id": "bitter_001_izakaya_unpaid_bill",
+      "title": "居酒屋里忘记结账的朋友",
+      "overview": "你和久违的朋友在一家普通的居酒屋吃饭。桌上摆着几道菜，朋友举起酒杯，一边看着你，一边和你说话。",
+      "purpose": "苦笑｜吃了不少、准备离开的朋友才发现还没有结账",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_001_izakaya_wallet.png",
+      "dialogues": [
+        "来来来，好久不见，我们慢慢喝。",
+        "感觉有点饱了。",
+        "啊，我好像有点醉了。差不多该回去了吧。",
+        "啊，等等。好像还没结账，你没结账吗。"
+      ]
+    },
+    {
+      "id": "bitter_006_izakaya_extra_orders",
+      "title": "吃饱了才想起追加的菜",
+      "overview": "你和朋友在一家普通的居酒屋吃饭。你们一起吃了几道菜，差不多准备结束这顿饭。坐在对面的朋友看着你，开始说话。",
+      "purpose": "苦笑｜两个人都吃饱后，才被告知还有追加的菜没上",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_001_izakaya_wallet.png",
+      "dialogues": [
+        "你吃饱了吗，我差不多了",
+        "那我们是不是该走了",
+        "啊，等等。我刚才又加了点菜，等一下",
+        "不好意思，好像点多了，等下再吃点？"
+      ]
+    },
+    {
+      "id": "bitter_002_station_wrong_way",
+      "title": "跟着朋友走了一圈，又回到车站",
+      "overview": "你和朋友从车站出来，准备去一家餐厅。朋友说自己以前来过，走在前面带路。走了十几分钟后，你们面前出现了一个眼熟的车站入口。",
+      "purpose": "苦笑｜自信满满的朋友带路，却走回了原来的车站",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_002_station_wrong_way.png",
+      "dialogues": [
+        "这边走。我以前来过，不用看地图。",
+        "诶，这家便利店，我们刚才是不是见过？",
+        "……怎么又回到车站了。",
+        "还是帮忙看一下地图吧？我的手机快没电了。"
+      ]
+    },
+    {
+      "id": "bitter_003_mixed_reports",
+      "title": "把两份报告合在一起的朋友",
+      "overview": "开会前，你把内容不同的两份报告打印出来，放在研究室的桌上，然后去拿饮料。回来时，朋友已经把资料整理成一叠，正递给你。",
+      "purpose": "苦笑｜朋友好心整理，却把两份不同的资料混在一起",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_003_mixed_reports.png",
+      "dialogues": [
+        "刚才资料散开了，我看他掉在地上就捡起来，帮你按页码排好了。",
+        "有几张页码一样，我就把它们放在一起了。",
+        "啊，是两份不同的报告吗？我还以为你把同一份资料打印了两遍。",
+        "老师马上就来了。我先去占位置，你分好了再过来。"
+      ]
+    },
+    {
+      "id": "bitter_004_hobby_group_presentation",
+      "title": "朋友替你答应了下次的分享",
+      "overview": "你和朋友一起参加的小型兴趣交流会刚刚结束。其他人正在收拾东西准备离开，朋友拿着手机走过来，开始聊下次的活动。",
+      "purpose": "苦笑｜朋友没有先征求意见，就替你答应了发言",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_004_hobby_group_presentation.png",
+      "dialogues": [
+        "下次活动在找人介绍电影，我就推荐了你。",
+        "我以为只要简单说几句，就先替你答应了。",
+        "不过刚才收到消息，说最好能讲十分钟左右，还要准备幻灯片。",
+        "不好意思，我是不是应该先问问你？"
+      ]
+    },
+    {
+      "id": "bitter_005_matcha_preference",
+      "title": "把你的口味记反了的朋友",
+      "overview": "朋友来你家玩，从袋子里拿出路上在便利店买的两份新款甜点。你以前告诉过他，自己不太喜欢抹茶味。",
+      "purpose": "苦笑｜朋友记住了你谈过的口味，却把喜欢和不喜欢记反了",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_005_matcha_preference.png",
+      "dialogues": [
+        "我看见有新出的甜点，就买过来了。",
+        "你之前不是提过抹茶吗？所以我特意选了抹茶味。",
+        "……原来你不喜欢啊？不好意思，我只记住了抹茶这两个字。",
+        "来的路上，我还一直觉得自己记得挺清楚呢。"
+      ]
+    },
+    {
+      "id": "teacher_slide_001",
+      "title": "朋友劝你吃看起来像河豚的鱼",
+      "overview": "你和朋友在港口的防波堤上钓鱼。朋友钓上来一条头部圆圆、身上有斑点的鱼，正拿给你看。",
+      "purpose": "苦笑｜鱼的外观与朋友的自信不一致",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "今天鱼还挺好钓的。",
+        "既然都钓上来了，今晚把它做来吃吧。",
+        "这绝对不是河豚！吃吧！"
+      ],
+      "source_slide": 1,
+      "source_line": "这绝对不是河豚！吃吧！",
+      "teacher_dialogue_index": 3,
+      "dialogue_origins": [
+        "added",
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing",
+      "source_line_original_ja": "これ絶対ふぐちゃうって！食おうぜ"
+    },
+    {
+      "id": "teacher_slide_002",
+      "title": "生日时端上来的手工鱼派",
+      "overview": "生日这天，你来到一位好朋友家里做客。朋友端给你一个大大的派，里面露着鱼头和鱼尾，表面有些地方已经烤得焦黑。",
+      "purpose": "温柔、苦笑｜祝福的心意与料理的外观交织在一起",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "为了今天，我很用心地做了这个。",
+        "生日快乐！这是我的一点心意。"
+      ],
+      "source_slide": 2,
+      "source_line": "生日快乐！这是我的一点心意。",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "adaptation_note": "将原文中的“気持”补全为“気持ち”。",
+      "source_line_original_ja": "お誕生日おめでとう！わたしからの気持"
+    },
+    {
+      "id": "teacher_slide_003",
+      "title": "邻居突然问你喜欢什么电阻器",
+      "overview": "你在公寓楼入口处与一位住在附近的男子站着聊天。他留着夹杂着灰白发丝的长发，白色T恤上写着“奥姆真理教”。",
+      "purpose": "困惑、社交反应｜回应意料之外的问题",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "对了，我可以问你一个问题吗？",
+        "你有喜欢的电阻器吗？"
+      ],
+      "source_slide": 3,
+      "source_line": "你有喜欢的电阻器吗？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "好きな抵抗器ってあります？"
+    },
+    {
+      "id": "teacher_slide_004",
+      "title": "电梯里的气味",
+      "overview": "你和同事一起乘坐公司的电梯。快要开门的时候，同事突然捏住鼻子，看向了你。",
+      "purpose": "社交、苦笑｜在狭小空间里被提起气味的话题",
+      "image": "illustrations/teacher_examples/originals/image4.jpg",
+      "dialogues": [
+        "咦，你有没有闻到什么味道？",
+        "怎么……好像有股屁味……？"
+      ],
+      "source_slide": 4,
+      "source_line": "怎么……好像有股屁味……？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_04_elevator_odor",
+      "source_line_original_ja": "なんか…オナラ臭くない…?"
+    },
+    {
+      "id": "teacher_slide_005",
+      "title": "即将关门的餐馆老板向你道谢",
+      "overview": "听说你常去的餐馆今天是最后一天营业，你来吃最后一顿饭。经营这家店多年的老板，隔着柜台把你平时点的套餐递了过来。",
+      "purpose": "温柔、苦涩｜与熟悉的餐馆告别",
+      "image": "illustrations/teacher_examples/originals/image5.jpg",
+      "dialogues": [
+        "好了，你平时点的套餐做好了。",
+        "谢谢你这些年来一直光顾啊……"
+      ],
+      "source_slide": 5,
+      "source_line": "谢谢你这些年来一直光顾啊……",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_05_closing_diner",
+      "source_line_original_ja": "今まで来てくれてありがとねぇ…"
+    },
+    {
+      "id": "teacher_slide_006",
+      "title": "在超市把陌生人认成熟人并打招呼",
+      "overview": "你在超市购物时，看到一位女性的背影很像熟人，便喊了一声“好久不见”。她转过身来，你才发现自己从没见过她。",
+      "purpose": "羞涩、社交反应｜意识到认错人的瞬间",
+      "image": "illustrations/teacher_examples/originals/image6.jpg",
+      "dialogues": [
+        "你谁啊！"
+      ],
+      "source_slide": 6,
+      "source_line": "你谁啊！",
+      "teacher_dialogue_index": 1,
+      "dialogue_origins": [
+        "teacher"
+      ],
+      "source_visual_group": "teacher_06_mistaken_shopper",
+      "source_line_original_ja": "誰よアンタ！"
+    },
+    {
+      "id": "teacher_slide_007",
+      "title": "在回转寿司店被递过来的账单",
+      "overview": "你和朋友们来到回转寿司店。吃完的盘子已经摞了好几层。准备离开时，一位朋友把账单递给了你。",
+      "purpose": "苦笑｜被期待支付事先没有约定由谁承担的账单",
+      "image": "illustrations/teacher_examples/originals/image7.jpg",
+      "dialogues": [
+        "大家都吃了不少呢。",
+        "真好吃～！谢谢款待！"
+      ],
+      "source_slide": 7,
+      "source_line": "真好吃～！谢谢款待！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_07_sushi_bill",
+      "source_line_original_ja": "美味しかった～！ご馳走様！"
+    },
+    {
+      "id": "teacher_slide_008",
+      "title": "朋友在教室里小声提醒你",
+      "overview": "下课后，你和朋友在教室里聊天。朋友稍微压低声音，指了指你衣服下方。",
+      "purpose": "羞涩｜被提醒衣着上的疏忽",
+      "image": "illustrations/teacher_examples/originals/image8.png",
+      "dialogues": [
+        "哎，过来一下。我小声跟你说。",
+        "你的拉链没拉上！"
+      ],
+      "source_slide": 8,
+      "source_line": "你的拉链没拉上！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_08_zipper_notice",
+      "source_line_original_ja": "君のチャック，開いてるで！"
+    },
+    {
+      "id": "teacher_slide_009",
+      "title": "让座后得到对方夸张的感谢",
+      "overview": "在拥挤的电车上，你给一位老人让了座。对方坐下后，双手合十，抬头望着你。",
+      "purpose": "温柔、羞涩｜面对真诚的感谢和夸张的称呼",
+      "image": "illustrations/teacher_examples/originals/image9.jpg",
+      "dialogues": [
+        "能坐下来，真是帮了我大忙。",
+        "谢谢你给我让座……你是神吗？"
+      ],
+      "source_slide": 9,
+      "source_line": "谢谢你给我让座……你是神吗？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_09_train_seat",
+      "source_line_original_ja": "席を譲ってくれてありがとう…貴方，神様?"
+    },
+    {
+      "id": "teacher_slide_010",
+      "title": "朋友要分给你一条钓上来的鱼",
+      "overview": "你和朋友在港口的防波堤上钓鱼。朋友举起一条头部圆圆、身上有斑点的鱼，准备分给你。",
+      "purpose": "温柔、苦笑｜犹豫是否接受出于好意的礼物",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "今天钓到了不少鱼啊。",
+        "我钓到两条，给你一条！"
+      ],
+      "source_slide": 10,
+      "source_line": "我钓到两条，给你一条！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing",
+      "source_line_original_ja": "２匹釣れたから，１匹やるよ！"
+    },
+    {
+      "id": "teacher_slide_011",
+      "title": "朋友说烤焦的派在京都很受欢迎",
+      "overview": "你在一位好朋友家里吃饭。朋友端上一个放入了整条鱼的派，表面有些地方已经烤得焦黑。",
+      "purpose": "苦笑｜料理的外观与对其口碑的介绍不一致",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "你吃过这样的派吗？",
+        "听说这个在京都特别受欢迎！"
+      ],
+      "source_slide": 11,
+      "source_line": "听说这个在京都特别受欢迎！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "source_line_original_ja": "これ，京都で大人気なんだって！"
+    },
+    {
+      "id": "teacher_slide_012",
+      "title": "邻居问起一个陌生的词",
+      "overview": "你在公寓楼入口处与一位住在附近的男子站着聊天。他的T恤上写着“奥姆真理教”。他换了个话题，向你提问。",
+      "purpose": "困惑、社交反应｜词语与衣服上的文字引发的联想",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "对了，有个问题想问你。",
+        "你知道‘波阿’吗？"
+      ],
+      "source_slide": 12,
+      "source_line": "你知道‘波阿’吗？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "translation_note": "原词“ポア”按日语读音采用音译“波阿”，未追加概念解释。",
+      "source_line_original_ja": "ポアって知ってる？"
+    },
+    {
+      "id": "teacher_slide_013",
+      "title": "朋友说自己考过河豚处理执照",
+      "overview": "朋友拿给你看他在防波堤上钓到的鱼，说要把它做来吃。因为那条鱼看起来像河豚，你问他知不知道该怎么处理。",
+      "purpose": "苦笑｜让人安心的解释后面跟着意料之外的补充",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "不用那么担心啦。",
+        "我可是有执照的。",
+        "我考到执照了，没问题的！小学的时候考的。"
+      ],
+      "source_slide": 13,
+      "source_line": "我考到执照了，没问题的！小学的时候考的。",
+      "teacher_dialogue_index": 3,
+      "dialogue_origins": [
+        "added",
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing",
+      "source_line_original_ja": "免許とったから大丈夫やって！ 小学生の時に"
+    },
+    {
+      "id": "teacher_slide_014",
+      "title": "生日时准备的一大锅料理",
+      "overview": "生日这天，一位好朋友在家为你做了饭。桌上放着一个小小的生日蛋糕，朋友端来了一大锅料理，里面放着大块的蔬菜。",
+      "purpose": "温柔、苦笑｜用心的祝福与很大的分量",
+      "image": "illustrations/teacher_examples/originals/image10.jpg",
+      "dialogues": [
+        "今天做了很多，不用客气哦。",
+        "生日快乐！多吃点哦！"
+      ],
+      "source_slide": 14,
+      "source_line": "生日快乐！多吃点哦！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_10_large_home_meal",
+      "source_line_original_ja": "誕生日おめでとう！いっぱい食べてね！"
+    },
+    {
+      "id": "teacher_slide_015",
+      "title": "在居酒屋被问起谁来付账",
+      "overview": "你和朋友们在居酒屋吃完了饭。桌上摆着许多空盘子和杯子。说到要离开时，一位朋友看着你，像是在等你回答。",
+      "purpose": "苦笑｜被问起付账时，对方已经默认你会承担",
+      "image": "illustrations/teacher_examples/originals/image11.jpg",
+      "dialogues": [
+        "今天可真吃了不少啊。",
+        "这顿……你会付的，对吧……？"
+      ],
+      "source_slide": 15,
+      "source_line": "这顿……你会付的，对吧……？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_11_izakaya_payment",
+      "source_line_original_ja": "ここは…払ってくれるんだよね…？"
+    },
+    {
+      "id": "teacher_slide_016",
+      "title": "烤焦的鱼派还能再添",
+      "overview": "在一位好朋友家里，对方端给你一个大大的派，里面露着鱼头和鱼尾，表面有些地方已经烤得焦黑。朋友正准备给你分一份。",
+      "purpose": "苦笑｜劝你吃的好意与再添一份的负担",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "先给你这些，够吗？",
+        "还有，吃完可以再添哦！"
+      ],
+      "source_slide": 16,
+      "source_line": "还有，吃完可以再添哦！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "source_line_original_ja": "おかわり，あるからね！"
+    },
+    {
+      "id": "teacher_slide_017",
+      "title": "钓鱼时突然冒出的河豚谐音梗",
+      "overview": "你和朋友在港口钓鱼。朋友举起一条看起来像河豚的鱼，看了一会儿，然后像是想到了什么，转头看向你。",
+      "purpose": "愉悦、苦笑｜面对突然冒出的谐音梗",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "这条河豚，肯定没想到自己会被钓上来吧。",
+        "命运不济的河豚！"
+      ],
+      "source_slide": 17,
+      "source_line": "命运不济的河豚！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing",
+      "translation_note": "原句“不遇なフグ！”利用“不遇（ふぐう，命运不济）”与“フグ（ふぐ，河豚）”的近音构成日语谐音梗。中文保留句意，无法保留这一日语谐音，不另造中文笑点。",
+      "source_line_original_ja": "不遇なフグ！"
+    },
+    {
+      "id": "teacher_slide_018",
+      "title": "朋友征求你对鱼派用料的意见",
+      "overview": "朋友在家给你端上一个放入了整条鱼的派。面对这个表面烤得焦黑的派，朋友正在和你商量下次做时用什么食材。",
+      "purpose": "苦笑｜还没问你对料理的感想，就先商量下次的用料",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "我想下次换种鱼试试。",
+        "你觉得竹荚鱼和鲱鱼，哪个更合适？"
+      ],
+      "source_slide": 18,
+      "source_line": "你觉得竹荚鱼和鲱鱼，哪个更合适？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "source_line_original_ja": "アジとニシンとどっちが合うと思う？"
+    },
+    {
+      "id": "teacher_slide_019",
+      "title": "问起T恤上的文字时得到的回答",
+      "overview": "你在公寓楼入口处与一位男子聊天。他白色T恤上写着“奥姆真理教”，你有些在意，便问了他这些字的意思。",
+      "purpose": "困惑、苦笑｜眼前的文字与对方的解释不一致",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "啊，你说这件T恤？",
+        "不是啦！我说的是鹦鹉那种鸟！"
+      ],
+      "source_slide": 19,
+      "source_line": "不是啦！我说的是鹦鹉那种鸟！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "translation_note": "日语“オウム”既可指鹦鹉，也用于“オウム真理教（奥姆真理教）”的名称。中文译名不具备这一相同字词的联系。",
+      "source_line_original_ja": "違うよ！鳥のオウムだよ！"
+    },
+    {
+      "id": "teacher_slide_020",
+      "title": "为两人的纪念日做的料理",
+      "overview": "你和一位亲近的人在家度过属于你们两人的纪念日。对方准备了一个大大的派，里面露着鱼头和鱼尾，表面有些地方已经烤得焦黑。",
+      "purpose": "温柔、苦笑｜纪念日的心意与料理的外观",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "今天想认认真真地亲手做一顿。",
+        "因为今天是我们两个人的纪念日……对吧！"
+      ],
+      "source_slide": 20,
+      "source_line": "因为今天是我们两个人的纪念日……对吧！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "source_line_original_ja": "今日は二人の記念日だから…ね！"
+    },
+    {
+      "id": "teacher_slide_021",
+      "title": "盯着T恤上的文字看时",
+      "overview": "你在公寓楼入口处与一位男子聊天。因为在意他T恤上写着的“奥姆真理教”，你不自觉地盯着那几个字看了一会儿。",
+      "purpose": "羞涩、苦笑｜阅读文字的视线被误解成了别的意思",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "喂～你在看哪里啊！"
+      ],
+      "source_slide": 21,
+      "source_line": "喂～你在看哪里啊！",
+      "teacher_dialogue_index": 1,
+      "dialogue_origins": [
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "ちょっとぉ～どこ見てんのよォ！"
+    },
+    {
+      "id": "teacher_slide_022",
+      "title": "朋友做了很多你喜欢的咖喱",
+      "overview": "你约好到朋友家里吃饭。朋友用大锅端来一锅放着大块蔬菜的咖喱，正准备放在你面前。",
+      "purpose": "温柔、苦笑｜被记住的喜好与吃不完的分量",
+      "image": "illustrations/teacher_examples/originals/image10.jpg",
+      "dialogues": [
+        "我记得你说过喜欢吃这个。",
+        "你喜欢咖喱，对吧！我做了好多！"
+      ],
+      "source_slide": 22,
+      "source_line": "你喜欢咖喱，对吧！我做了好多！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_10_large_home_meal",
+      "source_line_original_ja": "カレー，好きだよね！沢山作ったよ！"
+    },
+    {
+      "id": "teacher_slide_023",
+      "title": "为了给你打气而做的特制炖菜",
+      "overview": "你说起最近有些疲惫，朋友便在家为你准备了饭菜。锅里放着许多大小和颜色都不常见的食材。",
+      "purpose": "温柔、苦笑｜鼓励你的好意与不熟悉的料理",
+      "image": "illustrations/teacher_examples/originals/image10.jpg",
+      "dialogues": [
+        "你说最近有点累，所以我试着做了这个。",
+        "这是我的特制炖菜！吃了会有精神哦！"
+      ],
+      "source_slide": 23,
+      "source_line": "这是我的特制炖菜！吃了会有精神哦！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_10_large_home_meal",
+      "source_line_original_ja": "私の特製シチュー！元気が出るよ！"
+    },
+    {
+      "id": "teacher_slide_024",
+      "title": "附近的男子邀请你参加活动",
+      "overview": "你在公寓楼入口处遇到一位认识的男子。他的T恤上写着“奥姆真理教”。他指向附近的一栋楼，开始和你说话。",
+      "purpose": "社交、苦笑｜被邀请参加一个不太了解的活动",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "你一会儿有空吗？",
+        "那边正在办活动，来吧！"
+      ],
+      "source_slide": 24,
+      "source_line": "那边正在办活动，来吧！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "そこでイベントやってるんだけど，来てよ！"
+    },
+    {
+      "id": "teacher_slide_025",
+      "title": "被说像某个人后，对方坚决否认",
+      "overview": "你在公寓楼入口处与一位留着长发和胡须的男子聊天。你也有些在意他T恤上的文字，便说他有点像你在电视上见过的一个人。",
+      "purpose": "困惑、苦笑｜随口聊到长相，却遭到强烈否认",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "啊，你说的是谁？",
+        "不，绝对不像！"
+      ],
+      "source_slide": 25,
+      "source_line": "不，绝对不像！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "いや，絶対，にてないって！"
+    },
+    {
+      "id": "teacher_slide_026",
+      "title": "与邻居聊喜欢的鸟",
+      "overview": "你在公寓楼入口处与一位住在附近的男子站着聊天。他白色T恤上写着“奥姆真理教”，话题转到了鸟。",
+      "purpose": "社交、困惑｜对鸟的喜好与衣服上的文字引发的联想",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "既然聊到鸟了，",
+        "告诉我，你喜欢什么鸟？"
+      ],
+      "source_slide": 26,
+      "source_line": "告诉我，你喜欢什么鸟？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "好きな鳥教えて？"
+    },
+    {
+      "id": "teacher_slide_027",
+      "title": "新搬来的邻居向你打招呼",
+      "overview": "你在公寓楼入口处遇到一位从没见过的男子。他留着夹杂着灰白发丝的长发，白色T恤上写着“奥姆真理教”。他主动向你搭话。",
+      "purpose": "社交、困惑｜面对初次见面的自我介绍与对方的外观",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "我是刚搬到你隔壁的赤原！",
+        "今后请多关照。"
+      ],
+      "source_slide": 27,
+      "source_line": "我是刚搬到你隔壁的赤原！",
+      "teacher_dialogue_index": 1,
+      "dialogue_origins": [
+        "teacher",
+        "added"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "隣に引っ越してきた赤原です！"
+    },
+    {
+      "id": "teacher_slide_028",
+      "title": "邻居问你被说过像哪位名人",
+      "overview": "你在公寓楼入口处与一位住在附近的男子聊天。他留着长发和胡须，T恤上写着“奥姆真理教”。话题转到了外貌给人的印象。",
+      "purpose": "社交、困惑｜闲聊时问起长得像谁",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "第一次见面的人，有没有说过你像谁？",
+        "别人说过你像哪位名人吗？"
+      ],
+      "source_slide": 28,
+      "source_line": "别人说过你像哪位名人吗？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "あなた，どんな有名人に似てるって言われます？"
+    },
+    {
+      "id": "teacher_slide_029",
+      "title": "邻居说起练瑜伽的爱好",
+      "overview": "你在公寓楼入口处与一位住在附近的男子聊天。他的T恤上写着“奥姆真理教”。你问他休息日都做些什么。",
+      "purpose": "社交、困惑｜普通的爱好介绍与外观引发的联想",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "休息日我也会做不少运动。",
+        "我的爱好是瑜伽～"
+      ],
+      "source_slide": 29,
+      "source_line": "我的爱好是瑜伽～",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "ヨガが趣味なんですよ～"
+    },
+    {
+      "id": "social_001_group_photo",
+      "title": "已经发到群里的合照",
+      "overview": "聚会结束后，朋友拿着手机走了过来，给你看刚才大家一起拍的合照。",
+      "purpose": "苦笑、应酬笑｜自己闭着眼的照片已经被分享出去，对方又提议就留这张",
+      "dialogues": [
+        "这张拍得不错，大家都在看镜头。",
+        "不过，你刚好闭眼了。",
+        "我已经发群里了……不过，其他人都拍得挺好，就这样，可以吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_001.png",
+      "source_image": "1.png"
+    },
+    {
+      "id": "social_002_folded_book",
+      "title": "多了不少折角的新书",
+      "overview": "你把刚买的书借给了朋友。一周后，朋友来还书，一边翻着书页，一边跟你聊读后的感受。",
+      "purpose": "苦笑｜对方出于好意，把新书的好几处书页都折了角",
+      "dialogues": [
+        "这本书真的挺好看的，我已经看完了。",
+        "有意思的地方，我都把页角折起来了。",
+        "折得有点多，不过你以后找起来方便嘛。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_002.jpg",
+      "source_image": "2.jpg"
+    },
+    {
+      "id": "social_003_expired_coupon",
+      "title": "特意留给你的优惠券",
+      "overview": "午休时，你正准备和同事去附近的药妆店。同事从钱包里拿出一张优惠券，递给了你。",
+      "purpose": "苦笑｜对方好心留给你的优惠券，却已经过期了",
+      "dialogues": [
+        "我有张九折券，待会儿正好能用。",
+        "……等一下，有效期好像到昨天为止。",
+        "我一直没用，就是想着留给你的。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_003.png",
+      "source_image": "3.png"
+    },
+    {
+      "id": "social_004_unconfirmed_reservation",
+      "title": "没有确认的预约",
+      "overview": "周末，你和朋友来到一家经常要排队的餐厅。朋友之前说已经预约好了，现在正拿着手机找预约信息。",
+      "purpose": "苦笑｜以为已经预约好，来到店里才发现预约并未确认",
+      "dialogues": [
+        "就是这里。我上周就预约好了，今天不用排队。",
+        "等一下，我找找预约邮件。",
+        "咦，怎么还停在“确认预约”的页面……我是不是忘了点最后一下？",
+        "来都来了，先问问吧，说不定还有空位。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_004.jpg",
+      "source_image": "4.jpg"
+    },
+    {
+      "id": "social_005_late_friend_coffee",
+      "title": "先给自己买了咖啡才来的朋友",
+      "overview": "你和朋友约在车站出口见面。你已经等了四十分钟，朋友才终于出现，手里还拿着一杯外带咖啡。",
+      "purpose": "苦笑、应酬笑｜让自己久等的人先买了自己的饮料，又建议自己该怎么等",
+      "dialogues": [
+        "不好意思，路上耽搁了一会儿。",
+        "刚才那家咖啡店没什么人排队，我就买了一杯。",
+        "你没买咖啡吗？你不是挺喜欢那家店的？",
+        "下次你可以先去店里坐着，不用一直在这儿等。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_005.png",
+      "source_image": "5.png"
+    },
+    {
+      "id": "social_006_moving_help",
+      "title": "说好只搬两个箱子的搬家",
+      "overview": "朋友要搬家，请你帮一点忙。你按约定的时间来到朋友家，朋友正在整理要搬走的东西。",
+      "purpose": "苦笑｜以为只是帮一点小忙，到了才被要求一起搬家具、爬楼梯",
+      "dialogues": [
+        "谢谢你过来，主要就是这两个箱子。",
+        "还有这张桌子，我一个人好像也搬不了。",
+        "新住处在五楼，没有电梯。",
+        "你体力一向挺好的，应该没问题吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_006.png",
+      "source_image": "6.png"
+    },
+    {
+      "id": "social_007_cleanup_alone",
+      "title": "说好一起收拾的朋友",
+      "overview": "你和朋友们在借用的活动室里吃了饭。其他人陆续离开，你和最后留下的朋友开始收拾桌上的餐盒和杯子。",
+      "purpose": "苦笑、应酬笑｜本来要一起收拾的人先走了，又把剩下的活交给自己",
+      "dialogues": [
+        "今天玩得挺开心，收拾完就回去吧。",
+        "啊，再不走就赶不上电车了，我得先走了。",
+        "这些垃圾，你顺便帮忙带到楼下吧？下次请你喝饮料。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_007.jpg",
+      "source_image": "7.jpg"
+    },
+    {
+      "id": "social_008_bent_umbrella",
+      "title": "还回来的伞",
+      "overview": "几天前突然下雨，你把平时常用的伞借给了朋友。今天在大楼入口碰面时，朋友把伞还给了你。",
+      "purpose": "苦笑｜借出去的伞还回来时已经坏了，对方却说还能用",
+      "dialogues": [
+        "那天谢谢你借我伞，帮大忙了。",
+        "不过，风太大，有根伞骨被吹弯了。",
+        "但还是能撑开，应该也能挡雨。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_008.png",
+      "source_image": "8.png"
+    },
+    {
+      "id": "social_009_short_haircut",
+      "title": "比想象中更短的头发",
+      "overview": "你在美发店刚剪完头发。理发师拿着一面手持镜，让你看后面的效果。剪发前，你给对方看过想保留的头发长度的照片。",
+      "purpose": "苦笑、应酬笑｜头发剪得比要求的短，对方却解释说长长后就会恢复",
+      "dialogues": [
+        "后面是这样的，看起来清爽了不少吧。",
+        "不过，比您之前给我看的照片稍微短了一点。",
+        "再长一个月左右，应该就和照片里差不多长了。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_009.png",
+      "source_image": "9.png"
+    },
+    {
+      "id": "social_010_full_price_jacket",
+      "title": "不参加打折的外套",
+      "overview": "你正在服装店里试穿一件外套。旁边有打折的标牌，店员刚帮你拿来了合适的尺码。",
+      "purpose": "苦笑、应酬笑｜以为挑的是打折商品，才知道这件衣服不参加优惠，店员又顺势建议结账",
+      "dialogues": [
+        "尺码正合适，您穿着很好看。",
+        "不过，您刚才说的七折，是旁边那个衣架上的商品。",
+        "这件是原价，需要我帮您拿去结账吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_010.jpg",
+      "source_image": "10.jpg"
+    },
+    {
+      "id": "social_011_drama_spoiler",
+      "title": "不小心说出来的电视剧结局",
+      "overview": "你最近开始看一部悬疑剧，目前看到第三集。朋友已经看完了，见面时兴致勃勃地聊起了这部剧。",
+      "purpose": "苦笑｜期待中的电视剧关键情节，被朋友提前说了出来",
+      "dialogues": [
+        "你终于开始看那部剧了啊。",
+        "后面更好看，尤其是发现那个朋友其实才是真凶的时候。",
+        "……你还没看到那里吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_011.png",
+      "source_image": "11.png"
+    },
+    {
+      "id": "social_012_cancelled_meeting",
+      "title": "会议取消后换来的任务",
+      "overview": "你忙了一上午，终于整理好了下午例会的资料。同事看到群聊通知后，走到了你的桌旁。",
+      "purpose": "苦笑｜听说会议取消，刚要松一口气，却发现改成了当天截止的录制汇报",
+      "dialogues": [
+        "好消息，下午的会取消了。",
+        "不过，每个人都要录一段工作汇报，今天下班前发过去。",
+        "通知上写了，你那份是十分钟。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_012.png",
+      "source_image": "12.png"
+    },
+    {
+      "id": "social_013_renovation_finished",
+      "title": "装修结束了，可是……",
+      "overview": "隔壁住户装修了一段时间，你周末早上经常被噪声吵醒。今天在公寓走廊碰到那位邻居，对方主动和你打了招呼。",
+      "purpose": "苦笑、应酬笑｜听说装修结束，刚要松一口气，又得知休息日早上还有家具要搬进来",
+      "dialogues": [
+        "这段时间吵到您了，真不好意思。装修已经结束了。",
+        "不过，周日早上会有家具送过来。",
+        "说是八点左右到，搬的时候可能还会有点声音。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_013.jpg",
+      "source_image": "13.jpg"
+    },
+    {
+      "id": "social_014_early_cleaning",
+      "title": "只需要三十分钟的清扫",
+      "overview": "同一栋公寓的住户邀请你参加公共区域的清扫。对方说活不多，并给你看了写着集合时间的通知。",
+      "purpose": "苦笑、应酬笑｜以为只是短时间帮个忙，听下去才知道要在休息日一大早集合",
+      "dialogues": [
+        "人到齐的话，三十分钟就能结束。",
+        "周日七点开始，您方便的话就来参加吧。",
+        "对，是早上七点。那时候人少，打扫起来比较方便。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_014.png",
+      "source_image": "14.png"
+    },
+    {
+      "id": "social_015_eaten_cake",
+      "title": "期待着吃的蛋糕",
+      "overview": "你和室友共用冰箱。昨天买的蛋糕，你打算今天把事情做完后再吃。回到家时，在厨房里的室友和你说起了这件事。",
+      "purpose": "苦笑｜留给自己吃的蛋糕，被对方没打招呼就全吃了",
+      "dialogues": [
+        "你昨天买的蛋糕挺好吃的。",
+        "刚才在冰箱里看见，我就吃了一点。",
+        "最后只剩一口，留那么一点也不好看，我就全吃了。",
+        "你本来打算今天吃的吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_015.png",
+      "source_image": "15.png"
+    },
+    {
+      "id": "social_016_borrowed_power_bank",
+      "title": "再充五分钟",
+      "overview": "你和朋友在咖啡店里，刚才把充电宝借给了朋友。你准备离开去坐电车，但自己的手机电量也已经不多了。",
+      "purpose": "苦笑、应酬笑｜自己也需要充电宝，对方却请求再借一会儿",
+      "dialogues": [
+        "你这就要走了？",
+        "我这才百分之十，再让我充五分钟吧。",
+        "你还有百分之二十，应该能撑到家吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_016.jpg",
+      "source_image": "16.jpg"
+    },
+    {
+      "id": "social_017_sofa_for_trip",
+      "title": "床和沙发",
+      "overview": "你计划周末和两位朋友一起短途旅行。其中一位朋友订好了住宿，正在手机上给你看房间照片。",
+      "purpose": "苦笑、应酬笑｜还没商量，就已经默认只有自己睡沙发",
+      "dialogues": [
+        "房间订好了，位置也挺方便。",
+        "只有两张床，不过还有个沙发。",
+        "小林和我睡床，你睡沙发可以吗？",
+        "你不是一直说，在哪儿都能睡着吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_017.png",
+      "source_image": "17.png"
+    },
+    {
+      "id": "social_018_shared_credit",
+      "title": "变成了两个人一起做的",
+      "overview": "你独自完成的报告在会上受到了表扬。散会后，一位之前给过你一点小建议的同事过来和你聊天。",
+      "purpose": "苦笑、应酬笑｜只提过一点小建议的同事，却说报告是两个人共同完成的",
+      "dialogues": [
+        "今天那份报告反响不错啊。",
+        "幸好我当时让你改了标题。",
+        "部长问起的时候，我就说是咱俩一起做的。",
+        "下次有这种机会，也叫上我。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_018.png",
+      "source_image": "18.png"
+    },
+    {
+      "id": "social_019_family_without_asking",
+      "title": "因为是一家人，就没问",
+      "overview": "家人来你家做客。你回到客厅时，看到对方正在用你新买的杯子，旁边还有刚打开的茶。",
+      "purpose": "苦笑、应酬笑｜对方以一家人为由，不打招呼就用了新东西，也没确认该怎么使用",
+      "dialogues": [
+        "这杯子不错，我拿来用了。",
+        "这茶还没开封，我就帮你打开了。",
+        "都是一家人，我就没特意问你。",
+        "这杯子不能放洗碗机吗？我刚才已经放进去了。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_019.jpg",
+      "source_image": "19.jpg"
+    },
+    {
+      "id": "social_020_group_photographer",
+      "title": "总是负责拍照的人",
+      "overview": "你和朋友们刚到一个景点。一位朋友把手机递给了你，其他朋友已经站好，准备拍照了。",
+      "purpose": "苦笑、应酬笑｜被夸拍照好后受托帮大家拍照，自己的照片却被排到了后面",
+      "dialogues": [
+        "你拍照最拿手，帮我们拍一下吧？",
+        "再横着拍一张，我想发到网上。",
+        "然后再帮每个人拍几张单人照，可以吗？",
+        "你的照片，回去的时候再拍吧。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_020.png",
+      "source_image": "20.png"
+    }
+  ]
+}

@@ -4,6 +4,13 @@ English | [中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 ## Use the project
 
+The teacher's examples are available as `question_set/teacher_examples_scenarios_ja.json`.
+Select **先生の例・表情会話シナリオ（29場面）** in the question-set list and use Japanese TTS (`ja-JP`).
+The 29 cases preserve the original PowerPoint topics and core lines, with short introductions and optional lead-in lines.
+Each case has 1–3 lines and uses the PowerPoint's original image. Show and play the scene description first;
+press Space to start recording and display the image with the first spoken line, then use Space to advance or finish.
+Original images are in `question_set/illustrations/teacher_examples/originals`.
+
 The Japanese daily-life picture set is `question_set/japan_daily_speech_bubbles.json`.
 Each entry stores a scenario, a Japanese line, source and generation prompts, and an image path.
 Select this set and use Japanese (`ja-JP`) for TTS. The overview shows only a short introduction.

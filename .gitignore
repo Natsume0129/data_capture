@@ -24,6 +24,9 @@ ENV/
 *.spec
 *.exe
 
+# Generated PDF exports: keep locally, do not commit
+/output/pdf/
+
 # Runtime data: never commit participant recordings or derived clips
 /data/
 /raw/

@@ -4,6 +4,11 @@
 
 ## 使用项目
 
+老师的例子已整理为 `question_set/teacher_examples_scenarios_ja.json`，在列表中选择 **先生の例・表情会話シナリオ（29場面）**。
+29个案例保留PPT的题材和核心台词，补充简短说明与必要铺垫，每个案例1至3句，直接使用PPT原图。
+使用日语TTS（`ja-JP`）：先显示并播报场景说明，按空格开始录像并显示图片与台词1，再按空格依次切换或结束。
+原图位于 `question_set/illustrations/teacher_examples/originals`，同一案例的所有台词共用该图片。
+
 日本生活图片题库位于 `question_set/japan_daily_speech_bubbles.json`。
 每条保存场景、日语台词、原始提示词、生成提示词和图片路径。选择该题库后，TTS使用日语 `ja-JP`。
 综述阶段只显示简短介绍；按空格后放大显示带日语气泡的图片并开始记录反应区间，反应结束后再次按空格。

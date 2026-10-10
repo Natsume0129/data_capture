@@ -4,6 +4,11 @@
 
 ## プロジェクトの使い方
 
+先生の例は `question_set/teacher_examples_scenarios_ja.json` にあります。問題セット一覧で **先生の例・表情会話シナリオ（29場面）** を選択してください。
+元のPowerPointの題材と中心となる台詞を残し、説明と必要な前置きを補っています。各場面は1〜3句で、PowerPoint内の原画像を使います。
+日本語TTS（`ja-JP`）で説明を表示・再生した後、スペースキーで録画と画像・最初の台詞の表示を開始します。その後もスペースキーで順番に進め、最後に終了します。
+原画像は `question_set/illustrations/teacher_examples/originals` にあり、同じ場面の全台詞で共通です。
+
 日本の日常を扱う画像セットは `question_set/japan_daily_speech_bubbles.json` です。
 各項目には場面、台詞、元の画像プロンプト、実際の生成プロンプト、画像パスが保存されています。
 TTSは日本語 `ja-JP` を使用します。概要では短い導入だけを表示します。
