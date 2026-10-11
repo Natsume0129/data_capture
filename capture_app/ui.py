@@ -281,7 +281,7 @@ class SetupPage(QWidget):
         sets_group = QGroupBox()
         sets_layout = QVBoxLayout(sets_group)
         self.sets_list = QListWidget()
-        self.sets_list.setMinimumHeight(180)
+        self.sets_list.setMinimumHeight(360)
         self.sets_list.itemChanged.connect(self.update_target_segments)
         self.practice_checkbox.toggled.connect(self.update_target_segments)
         sets_layout.addWidget(self.sets_list)
