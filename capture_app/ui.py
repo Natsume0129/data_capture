@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import hashlib
 import shutil
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -1169,14 +1170,33 @@ class MainWindow(QMainWindow):
         try:
             width, height = self.camera.open(device, self.setup.preview)
             self.setup.set_camera_status(width, height)
+            self._log_camera_capture_config("preview")
         except Exception as exc:
+            self._log_camera_capture_config("preview_failed")
             QMessageBox.critical(
                 self,
                 self.translator.text("error"),
                 str(exc),
             )
 
+    def _log_camera_capture_config(self, stage: str) -> None:
+        info = getattr(self.camera, "capture_info", {})
+        if not info:
+            return
+        logger = None
+        try:
+            logger = EventLogger(self.project_root / "logs" / "camera_capture.jsonl")
+            logger.write("camera_capture_config", stage=stage, **info)
+        except OSError:
+            logging.getLogger(__name__).warning(
+                "Unable to write camera capture diagnostics", exc_info=True
+            )
+        finally:
+            if logger is not None:
+                logger.close()
+
     def _stop_preview(self) -> None:
+        self._log_camera_capture_config("preview_stopped")
         self.camera.close()
         self.setup.set_camera_status(None, None)
 
@@ -1229,6 +1249,7 @@ class MainWindow(QMainWindow):
                 self.translator.text("no_question_set"),
             )
             return
+        camera_open_attempted = False
         try:
             ffmpeg = ensure_ffmpeg(self.setup.ffmpeg_edit.text().strip())
             settings = self._collect_settings(ffmpeg)
@@ -1250,8 +1271,12 @@ class MainWindow(QMainWindow):
             device = self.camera.find_device(settings.camera_device_id)
             if device is None:
                 raise RuntimeError(self.translator.text("no_camera"))
+            camera_open_attempted = True
             width, height = self.camera.open(device, self.setup.preview)
+            self._log_camera_capture_config("prepare_experiment")
         except Exception as exc:
+            if camera_open_attempted:
+                self._log_camera_capture_config("prepare_experiment_failed")
             QMessageBox.critical(
                 self, self.translator.text("error"), str(exc)
             )
@@ -1396,6 +1421,7 @@ class MainWindow(QMainWindow):
                 "status": "running",
                 "started_at": utc_now(),
                 "settings": settings_payload,
+                "camera_capture": getattr(self.camera, "capture_info", {}),
                 "tts_effective": self.tts_effective,
                 "neutral_rest": {
                     "duration_seconds": self.settings.neutral_rest_seconds,
@@ -1473,6 +1499,9 @@ class MainWindow(QMainWindow):
                 planned_scenes=len(self.plan.scenes),
                 planned_segments=self.plan.actual_segments,
             )
+            camera_info = getattr(self.camera, "capture_info", {})
+            if camera_info:
+                self.event_logger.write("camera_capture_config", stage="session", **camera_info)
         except Exception as exc:
             self._cleanup_runtime()
             QMessageBox.critical(

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import threading
+from collections import deque
+from copy import deepcopy
 from dataclasses import dataclass
+import math
 from pathlib import Path
 from time import monotonic
 
@@ -27,6 +30,10 @@ class CameraDevice:
 
     def description(self) -> str:
         return self.name
+
+
+def prefers_mjpeg(device: CameraDevice) -> bool:
+    return "c920" in device.name.casefold()
 
 
 class CaptureThread(QThread):
@@ -55,6 +62,53 @@ class CaptureThread(QThread):
         self._writer: TimestampedVideoWriter | None = None
         self._last_frame = None
         self._last_frame_at: float | None = None
+        self._frame_times: deque[float] = deque(maxlen=120)
+        self.capture_configuration: dict = {
+            "device_name": self.device.name,
+            "backend": self.device.backend,
+            "requested_width": self.target_width,
+            "requested_height": self.target_height,
+            "requested_fps": self.target_fps,
+            "preferred_fourcc": "MJPG" if prefers_mjpeg(self.device) else None,
+            "actual_firstframe_dims": None,
+            "reported_width": None,
+            "reported_height": None,
+            "reported_fps": None,
+            "reported_fourcc": None,
+            "reported_fourcc_code": None,
+            "fallback_reason": None,
+            "attempts": [],
+        }
+
+    def _request_capture_properties(self, capture, request_mjpeg: bool) -> dict:
+        fourcc_ok = (
+            bool(capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG")))
+            if request_mjpeg else None
+        )
+        return {
+            "requested_fourcc": "MJPG" if request_mjpeg else None,
+            "fourcc_set_ok": fourcc_ok,
+            "width_set_ok": bool(capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.target_width)),
+            "height_set_ok": bool(capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height)),
+            "fps_set_ok": bool(capture.set(cv2.CAP_PROP_FPS, self.target_fps)),
+            "first_frame_ok": False,
+            "fallback_reason": (
+                "Driver declined MJPG request; continuing with its default input."
+                if request_mjpeg and not fourcc_ok else None
+            ),
+        }
+
+    def get_capture_info(self) -> dict:
+        with self._lock:
+            info = deepcopy(self.capture_configuration)
+            count = len(self._frame_times)
+            span = self._frame_times[-1] - self._frame_times[0] if count > 1 else 0.0
+            info.update({
+                "measured_capture_fps": (count - 1) / span if span > 0 else None,
+                "measured_window_seconds": span,
+                "observed_frames": count,
+            })
+            return info
 
     def run(self) -> None:
         capture = cv2.VideoCapture(self.device.index, self.device.backend)
@@ -67,24 +121,73 @@ class CaptureThread(QThread):
                 self.ready.set()
                 return
 
-            capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.target_width)
-            capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height)
-            capture.set(cv2.CAP_PROP_FPS, self.target_fps)
+            request_mjpeg = prefers_mjpeg(self.device)
+            attempts = [self._request_capture_properties(capture, request_mjpeg)]
+            with self._lock:
+                self.capture_configuration["attempts"] = attempts
+                self.capture_configuration["fallback_reason"] = attempts[0]["fallback_reason"]
             ok, first_frame = capture.read()
             captured_at = monotonic()
+            attempts[-1]["first_frame_ok"] = bool(ok and first_frame is not None)
+            if not attempts[-1]["first_frame_ok"] and attempts[-1]["fourcc_set_ok"]:
+                attempts[-1]["fallback_reason"] = (
+                    "MJPG request produced no frame; retrying driver default."
+                )
+                with self._lock:
+                    self.capture_configuration["fallback_reason"] = attempts[-1]["fallback_reason"]
+                capture.release()
+                capture = cv2.VideoCapture(self.device.index, self.device.backend)
+                if not capture.isOpened():
+                    self.open_error = f"无法重新打开摄像头默认输入：{self.device.name}"
+                    self.ready.set()
+                    return
+                attempts.append(self._request_capture_properties(capture, False))
+                ok, first_frame = capture.read()
+                captured_at = monotonic()
+                attempts[-1]["first_frame_ok"] = bool(ok and first_frame is not None)
             if not ok or first_frame is None:
                 self.open_error = f"摄像头没有返回画面：{self.device.name}"
+                with self._lock:
+                    self.capture_configuration["error"] = self.open_error
                 self.ready.set()
                 return
 
             self.height, self.width = first_frame.shape[:2]
-            reported_fps = float(capture.get(cv2.CAP_PROP_FPS))
+
+            def driver_value(property_id: int) -> float | None:
+                value = float(capture.get(property_id))
+                return value if math.isfinite(value) else None
+
+            reported_fps = driver_value(cv2.CAP_PROP_FPS)
+            fourcc_value = driver_value(cv2.CAP_PROP_FOURCC)
+            fourcc_code = int(fourcc_value) & 0xFFFFFFFF if fourcc_value is not None else None
             self.fps = (
                 min(reported_fps, self.target_fps)
-                if reported_fps > 0
+                if reported_fps is not None and reported_fps > 0
                 else self.target_fps
             )
             with self._lock:
+                self.capture_configuration = {
+                    "device_name": self.device.name,
+                    "backend": self.device.backend,
+                    "requested_width": self.target_width,
+                    "requested_height": self.target_height,
+                    "requested_fps": self.target_fps,
+                    "preferred_fourcc": "MJPG" if request_mjpeg else None,
+                    "actual_firstframe_dims": {"width": self.width, "height": self.height},
+                    "reported_width": driver_value(cv2.CAP_PROP_FRAME_WIDTH),
+                    "reported_height": driver_value(cv2.CAP_PROP_FRAME_HEIGHT),
+                    "reported_fps": reported_fps,
+                    "reported_fourcc": (
+                        fourcc_code.to_bytes(4, "little").decode("ascii", errors="replace").rstrip("\x00")
+                        if fourcc_code is not None else None
+                    ),
+                    "reported_fourcc_code": fourcc_code,
+                    "fallback_reason": next(
+                        (item["fallback_reason"] for item in attempts if item["fallback_reason"]), None
+                    ),
+                    "attempts": attempts,
+                }
                 self._last_frame = first_frame
                 self._last_frame_at = captured_at
             self.ready.set()
@@ -117,6 +220,8 @@ class CaptureThread(QThread):
         if captured_at is None:
             captured_at = monotonic()
         with self._lock:
+            if not self._frame_times or captured_at > self._frame_times[-1]:
+                self._frame_times.append(captured_at)
             self._last_frame = frame
             self._last_frame_at = captured_at
             if self._writer is not None:
@@ -191,6 +296,7 @@ class CameraController(QObject):
         self.frame_rate = 30.0
         self._preview: QLabel | None = None
         self._requested_path: Path | None = None
+        self._last_capture_info: dict = {}
 
     @staticmethod
     def devices() -> list[CameraDevice]:
@@ -216,6 +322,10 @@ class CameraController(QObject):
         return bool(self.worker and self.worker.isRunning())
 
     @property
+    def capture_info(self) -> dict:
+        return self.worker.get_capture_info() if self.worker else deepcopy(self._last_capture_info)
+
+    @property
     def is_recording(self) -> bool:
         return bool(self.worker and self.worker.is_recording)
 
@@ -232,6 +342,7 @@ class CameraController(QObject):
             return self.width, self.height
 
         self.close()
+        self._last_capture_info = {}
         self._preview = preview
         worker = CaptureThread(device, target_width, target_height, 30.0)
         worker.frame_ready.connect(self._display_frame)
@@ -301,6 +412,7 @@ class CameraController(QObject):
         if worker:
             worker.requestInterruption()
             worker.wait(5000)
+            self._last_capture_info = worker.get_capture_info()
         self.worker = None
         self.device_id = None
         self._preview = None
