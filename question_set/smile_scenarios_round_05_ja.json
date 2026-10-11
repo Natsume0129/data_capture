@@ -1,0 +1,171 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑い・表情会話シナリオ 第5/5回（11場面）",
+  "language": "ja-JP",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常の苦笑い＋先生の例・会話シナリオ（35場面）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常の苦笑い・愛想笑いの会話シナリオ（20場面）",
+      "scene_count": 20
+    }
+  ],
+  "source_file": "combined_all_smile_scenarios_55_ja.json",
+  "round_index": 5,
+  "round_count": 5,
+  "source_scene_range": [45, 55],
+  "scenes": [
+    {
+      "id": "social_010_full_price_jacket",
+      "title": "セール対象ではなかった上着",
+      "overview": "服の店で上着を試着しています。近くには割引の表示があり、店員がちょうどいいサイズを用意してくれたところです。",
+      "purpose": "苦笑い・愛想笑い｜割引だと思って選んだ服が対象外と分かり、そのまま会計を勧められる",
+      "dialogues": [
+        "サイズ、ちょうどいいですね。よくお似合いです。",
+        "ただ、先ほどおっしゃっていた三割引きは、隣のラックの商品なんです。",
+        "こちらは定価になります。このままお会計にお持ちしましょうか？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_010.jpg",
+      "source_image": "10.jpg"
+    },
+    {
+      "id": "social_011_drama_spoiler",
+      "title": "うっかり話されたドラマの結末",
+      "overview": "最近、ミステリードラマを見始め、今は第三話まで見ています。友人はもう最後まで見終わっていて、会ったときに楽しそうにこのドラマの話を始めました。",
+      "purpose": "苦笑い｜楽しみにしていたドラマの核心を友人に先に話される",
+      "dialogues": [
+        "あのドラマ、やっと見始めたんだね。",
+        "この先、もっと面白くなるよ。特に、あの友達が実は真犯人だって分かるところ。",
+        "……まだそこまで見てないよね？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_011.png",
+      "source_image": "11.png"
+    },
+    {
+      "id": "social_012_cancelled_meeting",
+      "title": "会議がなくなった代わりに",
+      "overview": "午前中ずっと忙しくしていて、ようやく午後の定例会議の資料を整理し終えました。グループチャットの通知を見た同僚が、机のそばに来ました。",
+      "purpose": "苦笑い｜会議の中止に安心しかけるが、当日締切の録画報告に置き換わる",
+      "dialogues": [
+        "いい知らせ。午後の会議、中止だって。",
+        "ただ、一人ずつ業務報告を録画して、今日の退勤までに送るんだって。",
+        "通知には、そっちの分は10分って書いてあるよ。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_012.png",
+      "source_image": "12.png"
+    },
+    {
+      "id": "social_013_renovation_finished",
+      "title": "工事が終わっても",
+      "overview": "隣の部屋でしばらくリフォームをしていて、週末の朝によく音で目が覚めていました。今日、集合住宅の廊下でその部屋の住人に会うと、相手から声をかけられました。",
+      "purpose": "苦笑い・愛想笑い｜工事の終了に安心しかけるが、休日の朝にも搬入があると知らされる",
+      "dialogues": [
+        "このところうるさくして、すみませんでした。工事はもう終わりました。",
+        "ただ、日曜の朝に家具の配達があって。",
+        "八時頃に来るそうなので、運ぶときに少し音がするかもしれません。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_013.jpg",
+      "source_image": "13.jpg"
+    },
+    {
+      "id": "social_014_early_cleaning",
+      "title": "三十分だけの清掃",
+      "overview": "同じ集合住宅に住む人が、共用部分の清掃に誘っています。作業は多くないと言い、集合時間の書かれたお知らせを見せています。",
+      "purpose": "苦笑い・愛想笑い｜短い手伝いだと思って聞いていたら、休日の早朝集合だと分かる",
+      "dialogues": [
+        "人数がそろえば、三十分で終わりますよ。",
+        "日曜の七時からなので、ご都合がよければ参加してください。",
+        "はい、朝の七時です。その時間は人が少なくて、掃除しやすいので。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_014.png",
+      "source_image": "14.png"
+    },
+    {
+      "id": "social_015_eaten_cake",
+      "title": "楽しみにしていたケーキ",
+      "overview": "ルームメイトと冷蔵庫を共用しています。昨日買ったケーキを、今日やることを済ませてから食べようと思っていました。帰宅すると、キッチンにいたルームメイトが声をかけてきます。",
+      "purpose": "苦笑い｜自分のために取っておいたケーキを、断りなく全部食べられる",
+      "dialogues": [
+        "昨日買ってきたケーキ、おいしかったよ。",
+        "さっき冷蔵庫で見かけて、ちょっと食べたんだ。",
+        "最後、ひと口分だけ残ったんだけど、それだけ残すのも見た目が悪いし、全部食べちゃった。",
+        "今日食べるつもりだった？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_015.png",
+      "source_image": "15.png"
+    },
+    {
+      "id": "social_016_borrowed_power_bank",
+      "title": "あと五分の充電",
+      "overview": "友人とカフェにいて、さっきモバイルバッテリーを貸しました。そろそろ電車に乗るために店を出たいところですが、自分のスマートフォンの電池も少なくなっています。",
+      "purpose": "苦笑い・愛想笑い｜自分も必要な充電器を、まだ借りていたいと頼まれる",
+      "dialogues": [
+        "もう行くの？",
+        "こっちはまだ十パーセントしかないから、あと五分だけ。",
+        "そっちはまだ二十パーセントあるし、家まではもつよね？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_016.jpg",
+      "source_image": "16.jpg"
+    },
+    {
+      "id": "social_017_sofa_for_trip",
+      "title": "ベッドとソファ",
+      "overview": "友人二人と、週末に小旅行をする予定です。そのうち一人が宿の部屋を予約し、スマートフォンで部屋の写真を見せてくれます。",
+      "purpose": "苦笑い・愛想笑い｜相談する前に自分だけソファで寝る前提にされる",
+      "dialogues": [
+        "部屋、予約できたよ。場所も便利だし。",
+        "ベッドは二つだけだけど、ソファもあるよ。",
+        "小林と私はベッドで、ソファのほうで寝てもらってもいい？",
+        "どこでも寝られるって、いつも言ってたよね？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_017.png",
+      "source_image": "17.png"
+    },
+    {
+      "id": "social_018_shared_credit",
+      "title": "二人で作ったことに",
+      "overview": "自分一人で作成した報告書が、会議で褒められました。会議の後、以前ちょっとした提案をしてくれた同僚が話しかけてきます。",
+      "purpose": "苦笑い・愛想笑い｜小さな助言をした同僚に共同作成だと説明される",
+      "dialogues": [
+        "今日の報告書、評判よかったね。",
+        "タイトルを変えてって言っておいてよかったね。",
+        "部長に聞かれたから、二人で作ったって言っておいたよ。",
+        "次もこういう機会があったら、声かけてね。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_018.png",
+      "source_image": "18.png"
+    },
+    {
+      "id": "social_019_family_without_asking",
+      "title": "家族だから確認なし",
+      "overview": "家族が家に遊びに来ています。リビングに戻ると、その家族が新しく買ったカップを使っています。そばには、さっき開けたばかりのお茶があります。",
+      "purpose": "苦笑い・愛想笑い｜家族だからと断りなく新品を使われ、扱い方も確認されない",
+      "dialogues": [
+        "このカップ、いいね。使わせてもらってるよ。",
+        "このお茶、まだ開いてなかったから、開けておいたよ。",
+        "家族だし、わざわざ聞かなかったんだ。",
+        "このカップ、食洗機に入れちゃだめだった？さっき入れたんだけど。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_019.jpg",
+      "source_image": "19.jpg"
+    },
+    {
+      "id": "social_020_group_photographer",
+      "title": "撮る側ばかり",
+      "overview": "友人たちと観光スポットに着いたところです。友人の一人がスマートフォンを渡してきて、ほかの友人たちはすでに写真を撮るために並んでいます。",
+      "purpose": "苦笑い・愛想笑い｜褒められて撮影を頼まれた後、自分の写真だけ後回しにされる",
+      "dialogues": [
+        "写真撮るの、一番うまいよね。撮ってくれない？",
+        "もう一枚、横向きで撮って。投稿したいから。",
+        "それから、一人ずつの写真も何枚か撮ってくれる？",
+        "そっちの写真は、帰るときに撮ろう。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_020.png",
+      "source_image": "20.png"
+    }
+  ]
+}

@@ -90,3 +90,27 @@ def test_only_available_scene_becomes_practice_when_pool_is_too_small() -> None:
     assert formal.scenes == ()
     assert formal.actual_segments == 0
     assert formal.exhausted is True
+
+
+def test_disabled_practice_keeps_all_available_scenes_formal() -> None:
+    question_set = make_set("a", [3] * 11)
+    practice, formal = build_sampling_plan_with_practice(
+        [question_set], target_segments=33, seed=42, practice_enabled=False
+    )
+    assert practice is None
+    assert len(formal.scenes) == 11
+    assert formal.actual_segments == 33
+    assert formal.exhausted is False
+    assert {scene.scene_id for scene in formal.scenes} == {
+        scene.scene_id for scene in question_set.scenes
+    }
+
+
+def test_disabled_practice_keeps_the_only_available_scene() -> None:
+    practice, formal = build_sampling_plan_with_practice(
+        [make_set("a", [2])], target_segments=5, seed=1, practice_enabled=False
+    )
+    assert practice is None
+    assert len(formal.scenes) == 1
+    assert formal.actual_segments == 2
+    assert formal.exhausted is True

@@ -1,0 +1,173 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑与社交表情·第5/5轮（11个场景）",
+  "language": "cmn-CN",
+  "translation_source": "combined_all_smile_scenarios_55_ja.json",
+  "translation_note": "场景编号、图片路径、台词数量及顺序与日语版一致；老师原始日语台词保存在 source_line_original_ja。日语谐音及专有词的处理在相关场景的 translation_note 中注明。",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常苦笑与老师示例（35个场景）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常苦笑与社交笑（20个场景）",
+      "scene_count": 20
+    }
+  ],
+  "source_file": "combined_all_smile_scenarios_55_zh.json",
+  "round_index": 5,
+  "round_count": 5,
+  "source_scene_range": [45, 55],
+  "scenes": [
+    {
+      "id": "social_010_full_price_jacket",
+      "title": "不参加打折的外套",
+      "overview": "你正在服装店里试穿一件外套。旁边有打折的标牌，店员刚帮你拿来了合适的尺码。",
+      "purpose": "苦笑、应酬笑｜以为挑的是打折商品，才知道这件衣服不参加优惠，店员又顺势建议结账",
+      "dialogues": [
+        "尺码正合适，您穿着很好看。",
+        "不过，您刚才说的七折，是旁边那个衣架上的商品。",
+        "这件是原价，需要我帮您拿去结账吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_010.jpg",
+      "source_image": "10.jpg"
+    },
+    {
+      "id": "social_011_drama_spoiler",
+      "title": "不小心说出来的电视剧结局",
+      "overview": "你最近开始看一部悬疑剧，目前看到第三集。朋友已经看完了，见面时兴致勃勃地聊起了这部剧。",
+      "purpose": "苦笑｜期待中的电视剧关键情节，被朋友提前说了出来",
+      "dialogues": [
+        "你终于开始看那部剧了啊。",
+        "后面更好看，尤其是发现那个朋友其实才是真凶的时候。",
+        "……你还没看到那里吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_011.png",
+      "source_image": "11.png"
+    },
+    {
+      "id": "social_012_cancelled_meeting",
+      "title": "会议取消后换来的任务",
+      "overview": "你忙了一上午，终于整理好了下午例会的资料。同事看到群聊通知后，走到了你的桌旁。",
+      "purpose": "苦笑｜听说会议取消，刚要松一口气，却发现改成了当天截止的录制汇报",
+      "dialogues": [
+        "好消息，下午的会取消了。",
+        "不过，每个人都要录一段工作汇报，今天下班前发过去。",
+        "通知上写了，你那份是十分钟。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_012.png",
+      "source_image": "12.png"
+    },
+    {
+      "id": "social_013_renovation_finished",
+      "title": "装修结束了，可是……",
+      "overview": "隔壁住户装修了一段时间，你周末早上经常被噪声吵醒。今天在公寓走廊碰到那位邻居，对方主动和你打了招呼。",
+      "purpose": "苦笑、应酬笑｜听说装修结束，刚要松一口气，又得知休息日早上还有家具要搬进来",
+      "dialogues": [
+        "这段时间吵到您了，真不好意思。装修已经结束了。",
+        "不过，周日早上会有家具送过来。",
+        "说是八点左右到，搬的时候可能还会有点声音。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_013.jpg",
+      "source_image": "13.jpg"
+    },
+    {
+      "id": "social_014_early_cleaning",
+      "title": "只需要三十分钟的清扫",
+      "overview": "同一栋公寓的住户邀请你参加公共区域的清扫。对方说活不多，并给你看了写着集合时间的通知。",
+      "purpose": "苦笑、应酬笑｜以为只是短时间帮个忙，听下去才知道要在休息日一大早集合",
+      "dialogues": [
+        "人到齐的话，三十分钟就能结束。",
+        "周日七点开始，您方便的话就来参加吧。",
+        "对，是早上七点。那时候人少，打扫起来比较方便。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_014.png",
+      "source_image": "14.png"
+    },
+    {
+      "id": "social_015_eaten_cake",
+      "title": "期待着吃的蛋糕",
+      "overview": "你和室友共用冰箱。昨天买的蛋糕，你打算今天把事情做完后再吃。回到家时，在厨房里的室友和你说起了这件事。",
+      "purpose": "苦笑｜留给自己吃的蛋糕，被对方没打招呼就全吃了",
+      "dialogues": [
+        "你昨天买的蛋糕挺好吃的。",
+        "刚才在冰箱里看见，我就吃了一点。",
+        "最后只剩一口，留那么一点也不好看，我就全吃了。",
+        "你本来打算今天吃的吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_015.png",
+      "source_image": "15.png"
+    },
+    {
+      "id": "social_016_borrowed_power_bank",
+      "title": "再充五分钟",
+      "overview": "你和朋友在咖啡店里，刚才把充电宝借给了朋友。你准备离开去坐电车，但自己的手机电量也已经不多了。",
+      "purpose": "苦笑、应酬笑｜自己也需要充电宝，对方却请求再借一会儿",
+      "dialogues": [
+        "你这就要走了？",
+        "我这才百分之十，再让我充五分钟吧。",
+        "你还有百分之二十，应该能撑到家吧？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_016.jpg",
+      "source_image": "16.jpg"
+    },
+    {
+      "id": "social_017_sofa_for_trip",
+      "title": "床和沙发",
+      "overview": "你计划周末和两位朋友一起短途旅行。其中一位朋友订好了住宿，正在手机上给你看房间照片。",
+      "purpose": "苦笑、应酬笑｜还没商量，就已经默认只有自己睡沙发",
+      "dialogues": [
+        "房间订好了，位置也挺方便。",
+        "只有两张床，不过还有个沙发。",
+        "小林和我睡床，你睡沙发可以吗？",
+        "你不是一直说，在哪儿都能睡着吗？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_017.png",
+      "source_image": "17.png"
+    },
+    {
+      "id": "social_018_shared_credit",
+      "title": "变成了两个人一起做的",
+      "overview": "你独自完成的报告在会上受到了表扬。散会后，一位之前给过你一点小建议的同事过来和你聊天。",
+      "purpose": "苦笑、应酬笑｜只提过一点小建议的同事，却说报告是两个人共同完成的",
+      "dialogues": [
+        "今天那份报告反响不错啊。",
+        "幸好我当时让你改了标题。",
+        "部长问起的时候，我就说是咱俩一起做的。",
+        "下次有这种机会，也叫上我。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_018.png",
+      "source_image": "18.png"
+    },
+    {
+      "id": "social_019_family_without_asking",
+      "title": "因为是一家人，就没问",
+      "overview": "家人来你家做客。你回到客厅时，看到对方正在用你新买的杯子，旁边还有刚打开的茶。",
+      "purpose": "苦笑、应酬笑｜对方以一家人为由，不打招呼就用了新东西，也没确认该怎么使用",
+      "dialogues": [
+        "这杯子不错，我拿来用了。",
+        "这茶还没开封，我就帮你打开了。",
+        "都是一家人，我就没特意问你。",
+        "这杯子不能放洗碗机吗？我刚才已经放进去了。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_019.jpg",
+      "source_image": "19.jpg"
+    },
+    {
+      "id": "social_020_group_photographer",
+      "title": "总是负责拍照的人",
+      "overview": "你和朋友们刚到一个景点。一位朋友把手机递给了你，其他朋友已经站好，准备拍照了。",
+      "purpose": "苦笑、应酬笑｜被夸拍照好后受托帮大家拍照，自己的照片却被排到了后面",
+      "dialogues": [
+        "你拍照最拿手，帮我们拍一下吧？",
+        "再横着拍一张，我想发到网上。",
+        "然后再帮每个人拍几张单人照，可以吗？",
+        "你的照片，回去的时候再拍吧。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_020.png",
+      "source_image": "20.png"
+    }
+  ]
+}

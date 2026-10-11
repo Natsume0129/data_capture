@@ -97,9 +97,13 @@ def build_sampling_plan_with_practice(
     question_sets: list[QuestionSet],
     target_segments: int,
     seed: int,
-) -> tuple[Scene, SamplingPlan]:
+    *,
+    practice_enabled: bool = True,
+) -> tuple[Scene | None, SamplingPlan]:
     if not question_sets:
         raise ValueError("at least one question set is required")
+    if not practice_enabled:
+        return None, build_sampling_plan(question_sets, target_segments, seed)
     largest_scene = max(
         len(scene.segments)
         for question_set in question_sets

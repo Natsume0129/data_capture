@@ -16,6 +16,7 @@ class Segment:
     utterance: str = ""
     image_caption: bool = False
     scene_dialogue: bool = False
+    neutral: bool = False
 
     @property
     def category(self) -> str:
@@ -27,6 +28,8 @@ class Segment:
 
     @property
     def stimulus_format(self) -> str:
+        if self.neutral:
+            return "neutral"
         if self.image_caption:
             return "image_caption"
         if self.scene_dialogue:
@@ -98,3 +101,5 @@ class ExperimentSettings:
     requested_width: int
     requested_height: int
     tts: TTSSettings
+    practice_enabled: bool = True
+    neutral_rest_seconds: int = 10

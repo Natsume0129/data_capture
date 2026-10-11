@@ -4,19 +4,10 @@ English | [中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 ## Use the project
 
-The teacher's examples are available as `question_set/teacher_examples_scenarios_ja.json`.
-Select **先生の例・表情会話シナリオ（29場面）** in the question-set list and use Japanese TTS (`ja-JP`).
-The 29 cases preserve the original PowerPoint topics and core lines, with short introductions and optional lead-in lines.
-Each case has 1–3 lines and uses the PowerPoint's original image. Show and play the scene description first;
-press Space to start recording and display the image with the first spoken line, then use Space to advance or finish.
-Original images are in `question_set/illustrations/teacher_examples/originals`.
-
-The Japanese daily-life picture set is `question_set/japan_daily_speech_bubbles.json`.
-Each entry stores a scenario, a Japanese line, source and generation prompts, and an image path.
-Select this set and use Japanese (`ja-JP`) for TTS. The overview shows only a short introduction.
-Press Space to reveal the large picture with its embedded speech bubble and start the response interval;
-press Space again when the response ends. Images are loaded locally before presentation.
-The usual practice-scene rule applies: selecting only this five-scene set yields one practice scene and at most four formal clips.
+The full 55-scene question sets remain available as `question_set/combined_all_smile_scenarios_55_ja.json`, shown as **苦笑い・表情会話シナリオ統合版（55場面）**, and `question_set/combined_all_smile_scenarios_55_zh.json`, shown as **苦笑与社交表情情景题库·中文整合版（55个场景）**.
+The default question-set list includes both the full sets and the round sets. The Japanese round files are `question_set/smile_scenarios_round_01_ja.json` through `question_set/smile_scenarios_round_05_ja.json`; the Chinese round files are `question_set/smile_scenarios_round_01_zh.json` through `question_set/smile_scenarios_round_05_zh.json`. For each language, rounds 1–5 contain 11 scenes each, with no overlap between rounds, and together cover all 55 scenes.
+Select only one language for each experiment: use Japanese TTS (`ja-JP`) for the Japanese set or Chinese TTS (`cmn-CN`) for the Chinese set. Both language versions share the same images.
+Show and play the scene description first; press Space to start recording and display the image with the first spoken line, then use Space to advance through the lines in order or finish.
 
 ### Requirements
 
@@ -38,6 +29,8 @@ py -3.13 -m venv .venv313
 
 If the virtual environment already exists, only run the final two commands to update it.
 
+Recording now requires PyAV (`av>=16.1,<17`). Update an existing environment with `.\.venv313\Scripts\python.exe -m pip install -r requirements.txt`, then close the application and restart it with `.\run.ps1`.
+
 ### Start
 
 ```powershell
@@ -56,22 +49,28 @@ Run the application from source for now. The packaged executable is not yet the 
 ### Run an experiment
 
 1. Enter an anonymous participant ID.
-2. Select the save folder, target number of clips, random seed, and video-splitting mode.
-3. Select one or more CSV question sets from `question_set`.
+2. Select the save folder, random seed, and video-splitting mode. Set **Rest between scenes (seconds)** as needed: the default is 10 seconds, with a range of 4–300 seconds.
+3. Select a Japanese or Chinese question set from `question_set`; all sets are unchecked by default. For round-based collection, check only the one set for the chosen language and round 1–5; do not also select a full set or another round. The target clip count updates automatically when the selection or practice setting changes. With practice disabled, it is the sum of `segment_count` across the selected sets; with practice enabled, it is that sum minus 1, with a minimum of 0. With no set selected, it is 0. Neutral clips do not count toward this target.
 4. Select a camera, start the preview, and confirm framing and resolution.
 5. Optionally enable Google Cloud TTS as described below.
-6. Start the experiment. The first sampled scene is practice and is excluded from the formal manifest and target count.
+6. Review the **Run a practice scene first** setting, then start the experiment. This option is checked by default, and the application remembers the setting. When enabled, the entire first sampled scene is practice and is excluded from the formal `manifest.csv`. When unchecked, the experiment goes directly to the formal scene overview, and every scene in the selected set is available for formal collection.
 7. Read the scene overview. The camera is open, but recording has not started.
 8. Press Space to start the scene. The application records one continuous raw video for the complete scene and keeps the same image throughout that scene.
-9. Complete every item in order:
-   - Legacy sets (`情景,问题,目的,配图`): read or listen to the segment, respond naturally, return to a neutral expression, and press Space to continue.
-   - Instruction-and-utterance sets (`情景,片段序号,说明,发言,目的,配图`): the instruction is shown and spoken first. Press Space to show and play the utterance and record the clip start timestamp. Press Space again when the facial response ends; this records the end timestamp and opens the next instruction.
-   - Compact Japanese sets (`場面,セリフ,配图`): each row is one scene and one utterance. The scene is shown and spoken as the overview; pressing Space starts recording and plays the utterance, and the next Space press ends the clip.
-10. After the last item, the scene recording stops. FFmpeg extracts formal clips from the recorded timestamps. For instruction-and-utterance sets, the final clip contains only the interval from utterance start to the second Space press.
+9. Follow the spoken lines in order. Each line is displayed and played with the scene image; respond naturally, return to a neutral expression, and press Space to advance or finish.
+10. After the last item, the scene recording stops. FFmpeg extracts formal clips from the recorded timestamps.
+11. If another formal scene remains, a neutral rest period is recorded automatically. Face the camera, look at the cross, and relax your facial muscles. No image, spoken line, or audio is presented, and Space cannot skip the rest. When it ends, the application automatically opens the next formal scene overview. Rest occurs only between formal scenes—not before the first, after the last, or between practice and formal collection. Collecting all 11 formal scenes in a round therefore produces 10 neutral recordings.
 
-The selected save folder contains the practice video, raw scene videos, split clips, `manifest.csv`, `stimuli.json`, `session.json`, and timestamp logs. The videos contain no microphone audio. Files are created with the current user's permissions and can be deleted without administrator access.
+The selected save folder contains raw scene and rest videos, split clips, `manifest.csv`, `stimuli.json`, `session.json`, and timestamp logs, plus a practice video when practice is enabled. The videos contain no microphone audio. Files are created with the current user's permissions and can be deleted without administrator access.
 
-Do not select question sets in different text languages in the same TTS-enabled experiment. A single language and voice configuration applies to the entire run.
+New recordings use PyAV to write variable-frame-rate MP4 with each real frame's monotonic timestamp and a final packet duration extending to the actual recording stop. This corrects nominal-FPS time compression: for example, 50 frames captured over 10 seconds could previously become about 1.667 seconds at 30 FPS. No duplicate or black frames are inserted. OpenCV still enumerates and captures cameras; source FPS may remain low, and this does not fix a black camera feed. Recording fails if it is truly empty or no real frame arrives for more than 2 seconds. The 3-second neutral trim is unchanged. Only new recordings are corrected; old videos' original timing cannot be reliably recovered without their missing per-frame timestamp history.
+
+Neutral clips exclude the first 3,000 ms of each rest recording; a normal 10-second recording yields about 7 seconds of neutral video. The full rest recording remains in `raw`. Neutral videos are saved alongside the other split videos in `clips`, and their `manifest.csv` rows use `stimulus_format='neutral'` and `purpose='neutral'`. The events log records the rest start, end, and trim. Neutral videos follow the existing silent or end-of-experiment splitting setting. If the actual rest recording is 3 seconds or shorter, there is no usable neutral video after trimming: the application reports an error and stops instead of creating an empty neutral clip.
+
+To collect all 55 scenes formally across five rounds, leave **Run a practice scene first** unchecked in every round. Enabling practice uses one of that round's 11 scenes for practice, leaving at most 10 scenes for formal collection. The target counts clips / spoken lines, not scenes, and is calculated automatically without manual input. Subtracting 1 when practice is enabled is only the displayed target calculation: practice still excludes an entire scene of 1–4 spoken lines, so the actual formal clip count may be lower than the displayed target. With practice disabled, the automatic target covers all 11 scenes in the selected round.
+
+Splitting the sets only shortens each experiment; it does not mean the camera black-screen issue has been fixed. Between rounds, stop and restart the camera and confirm a working preview before starting the next round.
+
+Do not select both language versions in the same experiment. A single language and voice configuration applies to the entire run.
 
 ## Configure the Google Cloud TTS API
 
@@ -84,9 +83,8 @@ The application uses the Google Cloud Text-to-Speech Python client, generates LI
 5. In the application, enable **Google Cloud TTS** and select the JSON file with **Service-account JSON**.
 6. Set **Text language code** to match the selected question set:
    - Chinese: `cmn-CN`
-   - English: `en-US`
    - Japanese: `ja-JP`
 7. Leave **Voice name** empty to let Google choose a default voice, or enter a compatible Google Cloud voice name. Set the speaking rate as required.
-8. Start the experiment. Missing audio is generated before the session begins and saved under `D:\datacapture\tts_cache`. In the new question-set format, both the instruction and the utterance receive their own cached WAV file.
+8. Start the experiment. Missing audio is generated before the session begins and saved under `D:\datacapture\tts_cache`. The scene description and each spoken line receive their own cached WAV file.
 
 The credentials file itself is not copied into the cache or experiment output. If generation fails, the application lets the operator retry, continue without speech, or cancel the experiment.

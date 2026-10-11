@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 import pytest
@@ -56,16 +57,44 @@ def test_rejects_conflicting_images_in_one_scene(tmp_path: Path) -> None:
         load_question_set(csv_path)
 
 
-def test_project_question_set_shape() -> None:
-    csv_path = (
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "combined_all_smile_scenarios_55_ja.json",
+        "combined_all_smile_scenarios_55_zh.json",
+    ],
+)
+def test_project_question_set_shape(filename: str) -> None:
+    question_set_path = (
         Path(__file__).resolve().parents[1]
         / "question_set"
-        / "笑容情景模拟实验_刺激问题库_v2_真实细化.csv"
+        / filename
     )
-    result = load_question_set(csv_path)
-    assert len(result.scenes) == 26
-    assert result.segment_count == 172
-    assert [item.ordinal for item in result.scenes[0].segments] == list(
-        range(1, 8)
-    )
+    result = load_question_set(question_set_path)
+    assert len(result.scenes) == 55
+    assert result.segment_count == 150
+    for scene in result.scenes:
+        assert scene.image_path is not None and scene.image_path.is_file()
+        assert 1 <= len(scene.segments) <= 4
+        assert [item.ordinal for item in scene.segments] == list(
+            range(1, len(scene.segments) + 1)
+        )
 
+
+@pytest.mark.parametrize("language", ["ja", "zh"])
+def test_five_rounds_preserve_the_full_question_set(language: str) -> None:
+    root = Path(__file__).resolve().parents[1] / "question_set"
+    full = json.loads(
+        (root / f"combined_all_smile_scenarios_55_{language}.json").read_text(
+            encoding="utf-8-sig"
+        )
+    )
+    combined_scenes = []
+    for round_index in range(1, 6):
+        path = root / f"smile_scenarios_round_{round_index:02d}_{language}.json"
+        part = json.loads(path.read_text(encoding="utf-8-sig"))
+        loaded = load_question_set(path)
+        assert len(loaded.scenes) == 11
+        combined_scenes.extend(part["scenes"])
+    assert combined_scenes == full["scenes"]
+    assert len({scene["id"] for scene in combined_scenes}) == 55

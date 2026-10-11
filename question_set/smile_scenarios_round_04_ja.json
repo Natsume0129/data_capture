@@ -1,0 +1,181 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑い・表情会話シナリオ 第4/5回（11場面）",
+  "language": "ja-JP",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常の苦笑い＋先生の例・会話シナリオ（35場面）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常の苦笑い・愛想笑いの会話シナリオ（20場面）",
+      "scene_count": 20
+    }
+  ],
+  "source_file": "combined_all_smile_scenarios_55_ja.json",
+  "round_index": 4,
+  "round_count": 5,
+  "source_scene_range": [34, 44],
+  "scenes": [
+    {
+      "id": "teacher_slide_028",
+      "title": "隣人に似ている有名人を聞かれる",
+      "overview": "集合住宅の入口で、近所の男性と話しています。男性は長い髪とひげがあり、Tシャツには「オウム真理教」と書かれています。話題が見た目の印象に移りました。",
+      "purpose": "社交・困惑｜似ている人物を尋ねる雑談",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "初対面の人に、誰かに似てるって言われることあります？",
+        "あなた，どんな有名人に似てるって言われます？"
+      ],
+      "source_slide": 28,
+      "source_line": "あなた，どんな有名人に似てるって言われます？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor"
+    },
+    {
+      "id": "teacher_slide_029",
+      "title": "隣人が話すヨガの趣味",
+      "overview": "集合住宅の入口で、近所の男性と話しています。Tシャツには「オウム真理教」と書かれています。休日に何をしているのか尋ねました。",
+      "purpose": "社交・困惑｜普通の趣味紹介と外観からの連想",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "休みの日も、けっこう体を動かしてますよ。",
+        "ヨガが趣味なんですよ～"
+      ],
+      "source_slide": 29,
+      "source_line": "ヨガが趣味なんですよ～",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor"
+    },
+    {
+      "id": "social_001_group_photo",
+      "title": "グループに送ってしまった集合写真",
+      "overview": "集まりが終わった後、友人がスマートフォンを持って近づいてきました。さっきみんなで撮った集合写真を見せてくれます。",
+      "purpose": "苦笑い・愛想笑い｜自分が目を閉じた写真をすでに共有され、残しておこうと提案される",
+      "dialogues": [
+        "これ、よく撮れてるね。みんなカメラの方を見てる。",
+        "ただ、ちょうど目を閉じちゃってるね。",
+        "もうグループに送っちゃった……でも、ほかのみんなはよく写ってるし、このままでいいかな？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_001.png",
+      "source_image": "1.png"
+    },
+    {
+      "id": "social_002_folded_book",
+      "title": "折り目が増えた新しい本",
+      "overview": "買ったばかりの本を友人に貸しました。一週間後、友人が本を返しに来て、ページをめくりながら読んだ感想を話しています。",
+      "purpose": "苦笑い｜善意で新しい本のページの角を何か所も折られる",
+      "dialogues": [
+        "この本、ほんとに面白かった。もう読み終わったよ。",
+        "面白いところは、ページの角を折っておいたよ。",
+        "ちょっとたくさん折っちゃったけど、あとで見つけやすいでしょ。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_002.jpg",
+      "source_image": "2.jpg"
+    },
+    {
+      "id": "social_003_expired_coupon",
+      "title": "取っておいてくれた割引券",
+      "overview": "昼休みに、同僚と近くのドラッグストアへ行こうとしています。同僚が財布から割引券を取り出し、こちらに差し出しました。",
+      "purpose": "苦笑い｜取っておいてくれた好意と割引券の期限切れが重なる",
+      "dialogues": [
+        "一割引きのクーポンがあるよ。このあと、ちょうど使えるね。",
+        "……ちょっと待って。有効期限、昨日までみたい。",
+        "ずっと使わないで、渡そうと思って取っておいたのに。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_003.png",
+      "source_image": "3.png"
+    },
+    {
+      "id": "social_004_unconfirmed_reservation",
+      "title": "確定していなかった予約",
+      "overview": "週末、友人とよく行列のできるレストランに来ました。友人は前に予約してあると言っていて、今、スマートフォンで予約の情報を探しています。",
+      "purpose": "苦笑い｜予約済みだと思って来た店で予約が確定していなかったと分かる",
+      "dialogues": [
+        "ここだよ。先週予約しておいたから、今日は並ばなくていいよ。",
+        "ちょっと待って、予約のメールを探すね。",
+        "え、まだ「予約を確定する」の画面になってる……最後に押し忘れたのかな？",
+        "せっかく来たし、とりあえず聞いてみよう。まだ席が空いてるかもしれないし。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_004.jpg",
+      "source_image": "4.jpg"
+    },
+    {
+      "id": "social_005_late_friend_coffee",
+      "title": "自分のコーヒーを買ってから来た友人",
+      "overview": "友人と駅の出口で待ち合わせています。もう四十分待ったところで、友人がようやく現れました。手には持ち帰りのコーヒーを一杯持っています。",
+      "purpose": "苦笑い・愛想笑い｜待たせた相手が自分の飲み物を買い、待ち方について助言する",
+      "dialogues": [
+        "ごめん、途中でちょっと時間がかかっちゃって。",
+        "さっきあのカフェ、あまり並んでなかったから、一杯買ってきたんだ。",
+        "コーヒー買わなかったの？あのお店、好きだったよね？",
+        "今度は先にお店に入って座ってていいよ。ずっとここで待ってなくても。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_005.png",
+      "source_image": "5.png"
+    },
+    {
+      "id": "social_006_moving_help",
+      "title": "二つの箱だけのはずだった引っ越し",
+      "overview": "引っ越しをする友人に、少しだけ手伝ってほしいと頼まれました。約束の時間に友人の家に着くと、友人が運ぶものをまとめています。",
+      "purpose": "苦笑い｜小さな手伝いのつもりで来たら家具と階段での運搬も頼まれる",
+      "dialogues": [
+        "来てくれてありがとう。主にこの二つの箱だけなんだけど。",
+        "あと、このテーブルも一人だと運べなさそうで。",
+        "引っ越し先は五階で、エレベーターがないんだ。",
+        "いつも体力あるし、大丈夫だよね？"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_006.png",
+      "source_image": "6.png"
+    },
+    {
+      "id": "social_007_cleanup_alone",
+      "title": "一緒に片づけるはずだった友人",
+      "overview": "友人たちと借りた活動室で食事をしました。ほかの人が帰っていき、最後に残った友人と、テーブルの容器やコップを片づけ始めています。",
+      "purpose": "苦笑い・愛想笑い｜一緒に片づける相手が先に帰り、残りの作業を頼まれる",
+      "dialogues": [
+        "今日は楽しかったね。片づけたら帰ろうか。",
+        "あ、電車に間に合わなくなるから、もう行かなきゃ。",
+        "このゴミ、ついでに下まで持っていってくれる？今度、飲み物おごるから。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_007.jpg",
+      "source_image": "7.jpg"
+    },
+    {
+      "id": "social_008_bent_umbrella",
+      "title": "返ってきた傘",
+      "overview": "数日前、急に雨が降ったので、いつも使っている傘を友人に貸しました。今日、建物の入口で会うと、友人が傘を返してくれます。",
+      "purpose": "苦笑い｜壊れた傘を返されるが、まだ使えると説明される",
+      "dialogues": [
+        "あの日は傘、ありがとう。助かったよ。",
+        "ただ、風が強くて、傘の骨が一本曲がっちゃった。",
+        "でも開くし、雨は防げると思うよ。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_008.png",
+      "source_image": "8.png"
+    },
+    {
+      "id": "social_009_short_haircut",
+      "title": "思ったより短くなった髪",
+      "overview": "美容院で髪を切り終えました。美容師が手鏡を持って、後ろの仕上がりを見せています。切る前には、残してほしい長さの写真を見せていました。",
+      "purpose": "苦笑い・愛想笑い｜希望より短い仕上がりを、伸びれば戻ると説明される",
+      "dialogues": [
+        "後ろはこんな感じです。すっきりしましたよね。",
+        "見せていただいた写真よりは、少し短くなりましたけど。",
+        "あと一か月くらい伸びれば、写真と同じくらいになると思います。"
+      ],
+      "image": "illustrations/everyday_social_smiles_20/scene_009.png",
+      "source_image": "9.png"
+    }
+  ]
+}

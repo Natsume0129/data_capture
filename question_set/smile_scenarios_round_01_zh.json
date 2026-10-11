@@ -1,0 +1,206 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑与社交表情·第1/5轮（11个场景）",
+  "language": "cmn-CN",
+  "translation_source": "combined_all_smile_scenarios_55_ja.json",
+  "translation_note": "场景编号、图片路径、台词数量及顺序与日语版一致；老师原始日语台词保存在 source_line_original_ja。日语谐音及专有词的处理在相关场景的 translation_note 中注明。",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常苦笑与老师示例（35个场景）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常苦笑与社交笑（20个场景）",
+      "scene_count": 20
+    }
+  ],
+  "source_file": "combined_all_smile_scenarios_55_zh.json",
+  "round_index": 1,
+  "round_count": 5,
+  "source_scene_range": [1, 11],
+  "scenes": [
+    {
+      "id": "bitter_001_izakaya_unpaid_bill",
+      "title": "居酒屋里忘记结账的朋友",
+      "overview": "你和久违的朋友在一家普通的居酒屋吃饭。桌上摆着几道菜，朋友举起酒杯，一边看着你，一边和你说话。",
+      "purpose": "苦笑｜吃了不少、准备离开的朋友才发现还没有结账",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_001_izakaya_wallet.png",
+      "dialogues": [
+        "来来来，好久不见，我们慢慢喝。",
+        "感觉有点饱了。",
+        "啊，我好像有点醉了。差不多该回去了吧。",
+        "啊，等等。好像还没结账，你没结账吗。"
+      ]
+    },
+    {
+      "id": "bitter_006_izakaya_extra_orders",
+      "title": "吃饱了才想起追加的菜",
+      "overview": "你和朋友在一家普通的居酒屋吃饭。你们一起吃了几道菜，差不多准备结束这顿饭。坐在对面的朋友看着你，开始说话。",
+      "purpose": "苦笑｜两个人都吃饱后，才被告知还有追加的菜没上",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_001_izakaya_wallet.png",
+      "dialogues": [
+        "你吃饱了吗，我差不多了",
+        "那我们是不是该走了",
+        "啊，等等。我刚才又加了点菜，等一下",
+        "不好意思，好像点多了，等下再吃点？"
+      ]
+    },
+    {
+      "id": "bitter_002_station_wrong_way",
+      "title": "跟着朋友走了一圈，又回到车站",
+      "overview": "你和朋友从车站出来，准备去一家餐厅。朋友说自己以前来过，走在前面带路。走了十几分钟后，你们面前出现了一个眼熟的车站入口。",
+      "purpose": "苦笑｜自信满满的朋友带路，却走回了原来的车站",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_002_station_wrong_way.png",
+      "dialogues": [
+        "这边走。我以前来过，不用看地图。",
+        "诶，这家便利店，我们刚才是不是见过？",
+        "……怎么又回到车站了。",
+        "还是帮忙看一下地图吧？我的手机快没电了。"
+      ]
+    },
+    {
+      "id": "bitter_003_mixed_reports",
+      "title": "把两份报告合在一起的朋友",
+      "overview": "开会前，你把内容不同的两份报告打印出来，放在研究室的桌上，然后去拿饮料。回来时，朋友已经把资料整理成一叠，正递给你。",
+      "purpose": "苦笑｜朋友好心整理，却把两份不同的资料混在一起",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_003_mixed_reports.png",
+      "dialogues": [
+        "刚才资料散开了，我看他掉在地上就捡起来，帮你按页码排好了。",
+        "有几张页码一样，我就把它们放在一起了。",
+        "啊，是两份不同的报告吗？我还以为你把同一份资料打印了两遍。",
+        "老师马上就来了。我先去占位置，你分好了再过来。"
+      ]
+    },
+    {
+      "id": "bitter_004_hobby_group_presentation",
+      "title": "朋友替你答应了下次的分享",
+      "overview": "你和朋友一起参加的小型兴趣交流会刚刚结束。其他人正在收拾东西准备离开，朋友拿着手机走过来，开始聊下次的活动。",
+      "purpose": "苦笑｜朋友没有先征求意见，就替你答应了发言",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_004_hobby_group_presentation.png",
+      "dialogues": [
+        "下次活动在找人介绍电影，我就推荐了你。",
+        "我以为只要简单说几句，就先替你答应了。",
+        "不过刚才收到消息，说最好能讲十分钟左右，还要准备幻灯片。",
+        "不好意思，我是不是应该先问问你？"
+      ]
+    },
+    {
+      "id": "bitter_005_matcha_preference",
+      "title": "把你的口味记反了的朋友",
+      "overview": "朋友来你家玩，从袋子里拿出路上在便利店买的两份新款甜点。你以前告诉过他，自己不太喜欢抹茶味。",
+      "purpose": "苦笑｜朋友记住了你谈过的口味，却把喜欢和不喜欢记反了",
+      "image": "illustrations/natural_bitter_smile_scenarios/scene_005_matcha_preference.png",
+      "dialogues": [
+        "我看见有新出的甜点，就买过来了。",
+        "你之前不是提过抹茶吗？所以我特意选了抹茶味。",
+        "……原来你不喜欢啊？不好意思，我只记住了抹茶这两个字。",
+        "来的路上，我还一直觉得自己记得挺清楚呢。"
+      ]
+    },
+    {
+      "id": "teacher_slide_001",
+      "title": "朋友劝你吃看起来像河豚的鱼",
+      "overview": "你和朋友在港口的防波堤上钓鱼。朋友钓上来一条头部圆圆、身上有斑点的鱼，正拿给你看。",
+      "purpose": "苦笑｜鱼的外观与朋友的自信不一致",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "今天鱼还挺好钓的。",
+        "既然都钓上来了，今晚把它做来吃吧。",
+        "这绝对不是河豚！吃吧！"
+      ],
+      "source_slide": 1,
+      "source_line": "这绝对不是河豚！吃吧！",
+      "teacher_dialogue_index": 3,
+      "dialogue_origins": [
+        "added",
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing",
+      "source_line_original_ja": "これ絶対ふぐちゃうって！食おうぜ"
+    },
+    {
+      "id": "teacher_slide_002",
+      "title": "生日时端上来的手工鱼派",
+      "overview": "生日这天，你来到一位好朋友家里做客。朋友端给你一个大大的派，里面露着鱼头和鱼尾，表面有些地方已经烤得焦黑。",
+      "purpose": "温柔、苦笑｜祝福的心意与料理的外观交织在一起",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "为了今天，我很用心地做了这个。",
+        "生日快乐！这是我的一点心意。"
+      ],
+      "source_slide": 2,
+      "source_line": "生日快乐！这是我的一点心意。",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie",
+      "adaptation_note": "将原文中的“気持”补全为“気持ち”。",
+      "source_line_original_ja": "お誕生日おめでとう！わたしからの気持"
+    },
+    {
+      "id": "teacher_slide_003",
+      "title": "邻居突然问你喜欢什么电阻器",
+      "overview": "你在公寓楼入口处与一位住在附近的男子站着聊天。他留着夹杂着灰白发丝的长发，白色T恤上写着“奥姆真理教”。",
+      "purpose": "困惑、社交反应｜回应意料之外的问题",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "对了，我可以问你一个问题吗？",
+        "你有喜欢的电阻器吗？"
+      ],
+      "source_slide": 3,
+      "source_line": "你有喜欢的电阻器吗？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor",
+      "source_line_original_ja": "好きな抵抗器ってあります？"
+    },
+    {
+      "id": "teacher_slide_004",
+      "title": "电梯里的气味",
+      "overview": "你和同事一起乘坐公司的电梯。快要开门的时候，同事突然捏住鼻子，看向了你。",
+      "purpose": "社交、苦笑｜在狭小空间里被提起气味的话题",
+      "image": "illustrations/teacher_examples/originals/image4.jpg",
+      "dialogues": [
+        "咦，你有没有闻到什么味道？",
+        "怎么……好像有股屁味……？"
+      ],
+      "source_slide": 4,
+      "source_line": "怎么……好像有股屁味……？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_04_elevator_odor",
+      "source_line_original_ja": "なんか…オナラ臭くない…?"
+    },
+    {
+      "id": "teacher_slide_005",
+      "title": "即将关门的餐馆老板向你道谢",
+      "overview": "听说你常去的餐馆今天是最后一天营业，你来吃最后一顿饭。经营这家店多年的老板，隔着柜台把你平时点的套餐递了过来。",
+      "purpose": "温柔、苦涩｜与熟悉的餐馆告别",
+      "image": "illustrations/teacher_examples/originals/image5.jpg",
+      "dialogues": [
+        "好了，你平时点的套餐做好了。",
+        "谢谢你这些年来一直光顾啊……"
+      ],
+      "source_slide": 5,
+      "source_line": "谢谢你这些年来一直光顾啊……",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_05_closing_diner",
+      "source_line_original_ja": "今まで来てくれてありがとねぇ…"
+    }
+  ]
+}

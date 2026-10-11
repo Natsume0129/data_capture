@@ -1,0 +1,232 @@
+{
+  "format": "scene_dialogue_v1",
+  "name": "苦笑い・表情会話シナリオ 第2/5回（11場面）",
+  "language": "ja-JP",
+  "sources": [
+    {
+      "file": "combined_bitter_smile_teacher_scenarios_ja.json",
+      "name": "日常の苦笑い＋先生の例・会話シナリオ（35場面）",
+      "scene_count": 35
+    },
+    {
+      "file": "everyday_social_smiles_20_ja.json",
+      "name": "日常の苦笑い・愛想笑いの会話シナリオ（20場面）",
+      "scene_count": 20
+    }
+  ],
+  "source_file": "combined_all_smile_scenarios_55_ja.json",
+  "round_index": 2,
+  "round_count": 5,
+  "source_scene_range": [12, 22],
+  "scenes": [
+    {
+      "id": "teacher_slide_006",
+      "title": "スーパーで知り合いだと思って声をかける",
+      "overview": "スーパーで買い物中、後ろ姿が知り合いに似た女性を見かけ、「久しぶり」と声をかけました。振り向いた女性は、初めて会う人でした。",
+      "purpose": "羞涩・社交反応｜人違いに気づく瞬間",
+      "image": "illustrations/teacher_examples/originals/image6.jpg",
+      "dialogues": [
+        "誰よアンタ！"
+      ],
+      "source_slide": 6,
+      "source_line": "誰よアンタ！",
+      "teacher_dialogue_index": 1,
+      "dialogue_origins": [
+        "teacher"
+      ],
+      "source_visual_group": "teacher_06_mistaken_shopper"
+    },
+    {
+      "id": "teacher_slide_007",
+      "title": "回転寿司で渡される会計の紙",
+      "overview": "友人たちと回転寿司へ来ました。食べ終わった皿が何段も積まれています。そろそろ帰ろうとすると、一人の友人が会計の紙をこちらへ差し出しました。",
+      "purpose": "苦笑い｜事前に決めていない支払いを期待される",
+      "image": "illustrations/teacher_examples/originals/image7.jpg",
+      "dialogues": [
+        "みんな、よく食べたね。",
+        "美味しかった～！ご馳走様！"
+      ],
+      "source_slide": 7,
+      "source_line": "美味しかった～！ご馳走様！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_07_sushi_bill"
+    },
+    {
+      "id": "teacher_slide_008",
+      "title": "教室で友人から小声で指摘される",
+      "overview": "授業の後、教室で友人と話しています。友人が少し声を落とし、こちらの服の下の方を指さしました。",
+      "purpose": "羞涩｜衣服のうっかりした状態を指摘される",
+      "image": "illustrations/teacher_examples/originals/image8.png",
+      "dialogues": [
+        "ちょっと、こっち。小声で言うけど。",
+        "君のチャック，開いてるで！"
+      ],
+      "source_slide": 8,
+      "source_line": "君のチャック，開いてるで！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_08_zipper_notice"
+    },
+    {
+      "id": "teacher_slide_009",
+      "title": "席を譲った相手から大げさに感謝される",
+      "overview": "混んだ電車で高齢の人に席を譲りました。相手は座った後、両手を合わせてこちらを見上げています。",
+      "purpose": "温柔・羞涩｜真剣な感謝と大げさな呼び方への反応",
+      "image": "illustrations/teacher_examples/originals/image9.jpg",
+      "dialogues": [
+        "座れて本当に助かったよ。",
+        "席を譲ってくれてありがとう…貴方，神様?"
+      ],
+      "source_slide": 9,
+      "source_line": "席を譲ってくれてありがとう…貴方，神様?",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_09_train_seat"
+    },
+    {
+      "id": "teacher_slide_010",
+      "title": "釣った魚を分けてくれる友人",
+      "overview": "港の堤防で友人と釣りをしています。友人は、丸い頭と斑点のある魚を持ち上げ、こちらに分けようとしています。",
+      "purpose": "温柔・苦笑い｜好意の贈り物を受け取るためらい",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "今日はよく釣れたな。",
+        "２匹釣れたから，１匹やるよ！"
+      ],
+      "source_slide": 10,
+      "source_line": "２匹釣れたから，１匹やるよ！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing"
+    },
+    {
+      "id": "teacher_slide_011",
+      "title": "焦げたパイが京都で人気だと言われる",
+      "overview": "親しい友人の家で食事をしています。友人が、魚を丸ごと入れたパイを出してくれました。表面には黒く焦げたところがあります。",
+      "purpose": "苦笑い｜見た目と評判の説明の食い違い",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "こういうパイ、食べたことある？",
+        "これ，京都で大人気なんだって！"
+      ],
+      "source_slide": 11,
+      "source_line": "これ，京都で大人気なんだって！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie"
+    },
+    {
+      "id": "teacher_slide_012",
+      "title": "隣人から聞かれる耳慣れない言葉",
+      "overview": "集合住宅の入口で、近所の男性と立ち話をしています。男性のTシャツには「オウム真理教」と書かれています。相手が話題を変えて、こちらに質問します。",
+      "purpose": "困惑・社交反応｜言葉と服の文字から生まれる連想",
+      "image": "illustrations/teacher_examples/originals/image3.jpg",
+      "dialogues": [
+        "そういえば、一つ聞きたいんだけど。",
+        "ポアって知ってる？"
+      ],
+      "source_slide": 12,
+      "source_line": "ポアって知ってる？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_03_neighbor"
+    },
+    {
+      "id": "teacher_slide_013",
+      "title": "ふぐの免許を取ったと言う友人",
+      "overview": "友人が堤防で釣り上げた魚を見せ、料理しようと話しています。魚がふぐに見えるので、扱い方を知っているのか尋ねました。",
+      "purpose": "苦笑い｜安心させる説明に予想外の補足がつく",
+      "image": "illustrations/teacher_examples/originals/image1.jpg",
+      "dialogues": [
+        "そんな心配せんでもええって。",
+        "ちゃんと免許も持ってるから。",
+        "免許とったから大丈夫やって！ 小学生の時に"
+      ],
+      "source_slide": 13,
+      "source_line": "免許とったから大丈夫やって！ 小学生の時に",
+      "teacher_dialogue_index": 3,
+      "dialogue_origins": [
+        "added",
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_01_fishing"
+    },
+    {
+      "id": "teacher_slide_014",
+      "title": "誕生日に用意された大きな鍋",
+      "overview": "誕生日に、親しい友人が自宅で料理を作ってくれました。テーブルには小さな誕生日ケーキがあり、友人は大きな野菜の入った鍋を持ってきました。",
+      "purpose": "温柔・苦笑い｜心のこもった祝福と大きな分量",
+      "image": "illustrations/teacher_examples/originals/image10.jpg",
+      "dialogues": [
+        "今日はたっぷり作ったから、遠慮しないでね。",
+        "誕生日おめでとう！いっぱい食べてね！"
+      ],
+      "source_slide": 14,
+      "source_line": "誕生日おめでとう！いっぱい食べてね！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_10_large_home_meal"
+    },
+    {
+      "id": "teacher_slide_015",
+      "title": "居酒屋で支払いを確認される",
+      "overview": "友人たちと居酒屋で食事をしました。テーブルには空の皿とグラスがたくさん並んでいます。帰る話になると、一人の友人がこちらの返事を待つように見ています。",
+      "purpose": "苦笑い｜支払いを引き受ける前提で尋ねられる",
+      "image": "illustrations/teacher_examples/originals/image11.jpg",
+      "dialogues": [
+        "今日はずいぶん食べちゃったね。",
+        "ここは…払ってくれるんだよね…？"
+      ],
+      "source_slide": 15,
+      "source_line": "ここは…払ってくれるんだよね…？",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_11_izakaya_payment"
+    },
+    {
+      "id": "teacher_slide_016",
+      "title": "焦げた魚のパイのおかわり",
+      "overview": "親しい友人の家で、魚の頭や尾が見える大きなパイを出してもらいました。表面には黒く焦げたところがあります。友人は、こちらの分を取り分けようとしています。",
+      "purpose": "苦笑い｜料理を勧める好意とおかわりの負担",
+      "image": "illustrations/teacher_examples/originals/image2.jpg",
+      "dialogues": [
+        "まずは、このくらいでいい？",
+        "おかわり，あるからね！"
+      ],
+      "source_slide": 16,
+      "source_line": "おかわり，あるからね！",
+      "teacher_dialogue_index": 2,
+      "dialogue_origins": [
+        "added",
+        "teacher"
+      ],
+      "source_visual_group": "teacher_02_fish_pie"
+    }
+  ]
+}

@@ -3,12 +3,15 @@ from __future__ import annotations
 import threading
 from dataclasses import dataclass
 from pathlib import Path
+from time import monotonic
 
 import cv2
 from cv2_enumerate_cameras import enumerate_cameras
 from PySide6.QtCore import QObject, QThread, Qt, Signal
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QLabel
+
+from .video_recorder import TimestampedVideoWriter
 
 
 @dataclass(frozen=True)
@@ -49,8 +52,9 @@ class CaptureThread(QThread):
         self.fps = target_fps
         self._preview_enabled = True
         self._lock = threading.RLock()
-        self._writer: cv2.VideoWriter | None = None
-        self._recorded_frames = 0
+        self._writer: TimestampedVideoWriter | None = None
+        self._last_frame = None
+        self._last_frame_at: float | None = None
 
     def run(self) -> None:
         capture = cv2.VideoCapture(self.device.index, self.device.backend)
@@ -67,6 +71,7 @@ class CaptureThread(QThread):
             capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height)
             capture.set(cv2.CAP_PROP_FPS, self.target_fps)
             ok, first_frame = capture.read()
+            captured_at = monotonic()
             if not ok or first_frame is None:
                 self.open_error = f"摄像头没有返回画面：{self.device.name}"
                 self.ready.set()
@@ -79,30 +84,43 @@ class CaptureThread(QThread):
                 if reported_fps > 0
                 else self.target_fps
             )
+            with self._lock:
+                self._last_frame = first_frame
+                self._last_frame_at = captured_at
             self.ready.set()
             frame = first_frame
 
             while not self.isInterruptionRequested():
-                self._process_frame(frame)
+                self._process_frame(frame, captured_at)
                 ok, frame = capture.read()
+                captured_at = monotonic()
                 if not ok or frame is None:
                     self.error.emit(
                         f"摄像头画面中断：{self.device.name}"
                     )
                     return
+        except Exception as exc:
+            message = f"摄像头采集或录像失败：{self.device.name}：{exc}"
+            if not self.ready.is_set():
+                self.open_error = message
+            else:
+                self.error.emit(message)
         finally:
             self.ready.set()
             with self._lock:
                 if self._writer is not None:
-                    self._writer.release()
+                    self._writer.abort()
                     self._writer = None
             capture.release()
 
-    def _process_frame(self, frame) -> None:
+    def _process_frame(self, frame, captured_at: float | None = None) -> None:
+        if captured_at is None:
+            captured_at = monotonic()
         with self._lock:
+            self._last_frame = frame
+            self._last_frame_at = captured_at
             if self._writer is not None:
-                self._writer.write(frame)
-                self._recorded_frames += 1
+                self._writer.write_frame(frame, captured_at)
             preview_enabled = self._preview_enabled
         if preview_enabled:
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -124,34 +142,34 @@ class CaptureThread(QThread):
         with self._lock:
             if self._writer is not None:
                 raise RuntimeError("a recording is already active")
-            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-            writer = cv2.VideoWriter(
-                str(path),
-                fourcc,
-                self.fps,
-                (self.width, self.height),
+            started_at = monotonic()
+            if self._last_frame is None or self._last_frame_at is None:
+                raise RuntimeError("摄像头尚未返回画面，无法开始录像。")
+            if started_at - self._last_frame_at > 2.0:
+                raise RuntimeError("摄像头超过2秒没有返回新画面，无法开始录像。")
+            writer = TimestampedVideoWriter(
+                path, self.width, self.height, self.fps, started_at
             )
-            if not writer.isOpened():
-                writer.release()
-                raise RuntimeError(f"无法创建录像文件：{path}")
+            try:
+                writer.write_frame(self._last_frame, self._last_frame_at, initial=True)
+            except Exception:
+                writer.abort()
+                raise
             self._writer = writer
-            self._recorded_frames = 0
 
     def recording_timestamp_ms(self) -> int:
         with self._lock:
             if self._writer is None:
                 raise RuntimeError("recording has not started")
-            return round(self._recorded_frames * 1000 / self.fps)
+            return self._writer.timestamp_ms(monotonic())
 
     def stop_recording(self) -> int:
         with self._lock:
             if self._writer is None:
                 raise RuntimeError("recording is not active")
-            duration_ms = round(self._recorded_frames * 1000 / self.fps)
-            self._writer.release()
+            writer = self._writer
             self._writer = None
-            self._recorded_frames = 0
-            return duration_ms
+            return writer.finish(monotonic())
 
     @property
     def is_recording(self) -> bool:

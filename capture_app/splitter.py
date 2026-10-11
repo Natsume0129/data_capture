@@ -67,6 +67,8 @@ def build_ffmpeg_command(ffmpeg: Path, task: SplitTask) -> list[str]:
         "18",
         "-pix_fmt",
         "yuv420p",
+        "-fps_mode",
+        "vfr",
         "-movflags",
         "+faststart",
         str(task.output_path),
@@ -108,6 +110,15 @@ def run_split(ffmpeg: Path, task: SplitTask) -> None:
         raise RuntimeError(result.stderr.strip() or "FFmpeg split failed")
     if not task.output_path.is_file() or task.output_path.stat().st_size == 0:
         raise RuntimeError("FFmpeg returned success without an output file")
+    try:
+        import av
+
+        with av.open(str(task.output_path)) as video:
+            if not video.streams.video or next(video.decode(video=0), None) is None:
+                raise RuntimeError("FFmpeg produced a video with no decodable frames")
+    except Exception as exc:
+        task.output_path.unlink(missing_ok=True)
+        raise RuntimeError(f"Video clip validation failed: {exc}") from exc
     task.output_path.chmod(0o600)
 
 

@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QEvent, QSettings, Qt, QThread, Signal
+from PySide6.QtCore import QElapsedTimer, QEvent, QSettings, Qt, QThread, QTimer, Signal
 from PySide6.QtGui import (
     QColor,
     QCloseEvent,
@@ -49,6 +49,7 @@ from .audio import LocalWavPlayer
 from .camera import CameraController
 from .i18n import LANGUAGES, Translator
 from .models import ExperimentSettings, QuestionSet, Scene, TTSSettings
+from .neutral import NEUTRAL_TRIM_MS, make_neutral_scene, neutral_timing
 from .question_sets import QuestionSetError, load_question_set
 from .sampler import build_sampling_plan_with_practice
 from .session import (
@@ -212,8 +213,14 @@ class SetupPage(QWidget):
         save_row.addWidget(self.save_edit, 1)
         save_row.addWidget(self.save_button)
         self.target_spin = QSpinBox()
-        self.target_spin.setRange(1, 1_000_000)
-        self.target_spin.setValue(100)
+        self.target_spin.setRange(0, 1_000_000)
+        self.target_spin.setValue(0)
+        self.target_spin.setReadOnly(True)
+        self.practice_checkbox = QCheckBox()
+        self.practice_checkbox.setChecked(True)
+        self.neutral_rest_spin = QSpinBox()
+        self.neutral_rest_spin.setRange(4, 300)
+        self.neutral_rest_spin.setValue(10)
         self.seed_spin = QSpinBox()
         self.seed_spin.setRange(0, 2_147_483_647)
         self.seed_spin.setValue(20260903)
@@ -230,6 +237,8 @@ class SetupPage(QWidget):
         general_form.addRow(self._label("participant_id"), self.participant_edit)
         general_form.addRow(self._label("save_path"), save_row)
         general_form.addRow(self._label("target_segments"), self.target_spin)
+        general_form.addRow(self.practice_checkbox)
+        general_form.addRow(self._label("neutral_rest_seconds"), self.neutral_rest_spin)
         general_form.addRow(self._label("random_seed"), self.seed_spin)
         general_form.addRow(self._label("split_mode"), self.split_combo)
         general_form.addRow(self._label("ffmpeg_path"), ffmpeg_row)
@@ -273,6 +282,8 @@ class SetupPage(QWidget):
         sets_layout = QVBoxLayout(sets_group)
         self.sets_list = QListWidget()
         self.sets_list.setMinimumHeight(180)
+        self.sets_list.itemChanged.connect(self.update_target_segments)
+        self.practice_checkbox.toggled.connect(self.update_target_segments)
         sets_layout.addWidget(self.sets_list)
         set_buttons = QHBoxLayout()
         self.add_set_button = QPushButton()
@@ -332,6 +343,9 @@ class SetupPage(QWidget):
         self.camera_group.setTitle(t("camera"))
         self.sets_group.setTitle(t("question_sets"))
         self.tts_group.setTitle(t("tts_settings"))
+        self.practice_checkbox.setText(t("practice_enabled"))
+        self.practice_checkbox.setToolTip(t("practice_hint"))
+        self.neutral_rest_spin.setToolTip(t("neutral_rest_setting_hint"))
         for label in self.findChildren(QLabel):
             key = label.property("translationKey")
             if key:
@@ -435,12 +449,20 @@ class SetupPage(QWidget):
             Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked
         )
         self.sets_list.addItem(item)
+        self.update_target_segments()
 
     def _remove_selected_sets(self) -> None:
         for item in list(self.sets_list.selectedItems()):
             key = item.data(Qt.ItemDataRole.UserRole)
-            self.question_sets_by_path.pop(key, None)
             self.sets_list.takeItem(self.sets_list.row(item))
+            self.question_sets_by_path.pop(key, None)
+        self.update_target_segments()
+
+    def update_target_segments(self) -> None:
+        total = sum(item.segment_count for item in self.selected_question_sets())
+        self.target_spin.setValue(
+            max(0, total - int(self.practice_checkbox.isChecked()))
+        )
 
     def selected_question_sets(self) -> list[QuestionSet]:
         selected: list[QuestionSet] = []
@@ -635,6 +657,11 @@ class ExperimentPage(QWidget):
             )
         elif self._mode == "splitting":
             self.recording_label.clear()
+        elif self._mode == "neutral_rest":
+            self.stage_label.setText(
+                self.translator.text("neutral_rest_countdown", seconds=self._rest_remaining)
+            )
+            self.advance_button.setText(self.translator.text("neutral_rest_auto_continue"))
 
     def show_instructions(self) -> None:
         self.centered_scene_text.hide()
@@ -812,6 +839,27 @@ class ExperimentPage(QWidget):
         self.crosshair.raise_()
         self.setFocus(Qt.FocusReason.OtherFocusReason)
 
+    def show_neutral_rest(self, remaining_seconds: int) -> None:
+        self._mode = "neutral_rest"
+        self._practice = False
+        self.centered_scene_text.hide()
+        self._set_image(None)
+        self.text.hide()
+        self.recovery_hint.hide()
+        self.update_neutral_rest_countdown(remaining_seconds)
+        self.advance_button.setText(self.translator.text("neutral_rest_auto_continue"))
+        self.advance_button.setEnabled(False)
+        self.abort_button.setEnabled(True)
+        self.recording_label.setText(self.translator.text("recording_raw"))
+        self.crosshair.show()
+        self.crosshair.raise_()
+
+    def update_neutral_rest_countdown(self, remaining_seconds: int) -> None:
+        self._rest_remaining = remaining_seconds
+        self.stage_label.setText(
+            self.translator.text("neutral_rest_countdown", seconds=remaining_seconds)
+        )
+
     def show_splitting(self, done: int, total: int) -> None:
         self.centered_scene_text.hide()
         self.text.show()
@@ -946,6 +994,15 @@ class MainWindow(QMainWindow):
         self.retranslate()
 
     def _reset_runtime(self) -> None:
+        if not hasattr(self, "neutral_rest_timer"):
+            self.neutral_rest_timer = QTimer(self)
+            self.neutral_rest_timer.setInterval(100)
+            self.neutral_rest_timer.timeout.connect(self._update_neutral_rest)
+        self.neutral_rest_timer.stop()
+        self.neutral_rest_clock = QElapsedTimer()
+        self.neutral_scene: Scene | None = None
+        self.neutral_raw_path: Path | None = None
+        self.neutral_clips = 0
         self.settings: ExperimentSettings | None = None
         self.plan = None
         self.practice_scene: Scene | None = None
@@ -1009,8 +1066,12 @@ class MainWindow(QMainWindow):
                 )
             )
         )
-        self.setup.target_spin.setValue(
-            int(self.qt_settings.value("target_segments", 100))
+        self.setup.practice_checkbox.setChecked(
+            str(self.qt_settings.value("practice_enabled", "true")).lower()
+            == "true"
+        )
+        self.setup.neutral_rest_spin.setValue(
+            int(self.qt_settings.value("neutral_rest_seconds", 10))
         )
         self.setup.seed_spin.setValue(
             int(self.qt_settings.value("random_seed", 20260903))
@@ -1053,6 +1114,8 @@ class MainWindow(QMainWindow):
     def _save_setup_settings(self, settings: ExperimentSettings) -> None:
         self.qt_settings.setValue("save_root", str(settings.save_root))
         self.qt_settings.setValue("target_segments", settings.target_segments)
+        self.qt_settings.setValue("practice_enabled", settings.practice_enabled)
+        self.qt_settings.setValue("neutral_rest_seconds", settings.neutral_rest_seconds)
         self.qt_settings.setValue("random_seed", settings.random_seed)
         self.qt_settings.setValue("split_mode", settings.split_mode)
         self.qt_settings.setValue("ffmpeg_path", str(settings.ffmpeg_path))
@@ -1153,6 +1216,8 @@ class MainWindow(QMainWindow):
                 voice_name=self.setup.voice_edit.text().strip(),
                 speaking_rate=self.setup.rate_spin.value(),
             ),
+            practice_enabled=self.setup.practice_checkbox.isChecked(),
+            neutral_rest_seconds=self.setup.neutral_rest_spin.value(),
         )
 
     def _prepare_experiment(self) -> None:
@@ -1171,9 +1236,14 @@ class MainWindow(QMainWindow):
                 question_sets,
                 settings.target_segments,
                 settings.random_seed,
+                practice_enabled=settings.practice_enabled,
             )
             for scene in (practice_scene, *plan.scenes):
-                if scene.image_path and not QImageReader(str(scene.image_path)).canRead():
+                if (
+                    scene is not None
+                    and scene.image_path
+                    and not QImageReader(str(scene.image_path)).canRead()
+                ):
                     raise ValueError(
                         self.translator.text("image_unreadable", path=scene.image_path)
                     )
@@ -1202,7 +1272,11 @@ class MainWindow(QMainWindow):
                 return
 
         summary = self.translator.text(
-            "plan_summary_with_practice",
+            (
+                "plan_summary_with_practice"
+                if practice_scene is not None
+                else "plan_summary"
+            ),
             scenes=len(plan.scenes),
             segments=plan.actual_segments,
         )
@@ -1323,6 +1397,11 @@ class MainWindow(QMainWindow):
                 "started_at": utc_now(),
                 "settings": settings_payload,
                 "tts_effective": self.tts_effective,
+                "neutral_rest": {
+                    "duration_seconds": self.settings.neutral_rest_seconds,
+                    "discard_start_ms": NEUTRAL_TRIM_MS,
+                    "planned_clips": max(0, len(self.plan.scenes) - 1),
+                },
                 "question_sets": sorted(
                     {
                         scene.question_set_name
@@ -1339,9 +1418,13 @@ class MainWindow(QMainWindow):
                     "seed": self.plan.seed,
                     "exhausted": self.plan.exhausted,
                     "practice_scene_id": (
-                        self.practice_scene.question_set_id
-                        + ":"
-                        + self.practice_scene.scene_id
+                        (
+                            self.practice_scene.question_set_id
+                            + ":"
+                            + self.practice_scene.scene_id
+                        )
+                        if self.practice_scene is not None
+                        else None
                     ),
                     "scene_ids": [
                         scene.question_set_id + ":" + scene.scene_id
@@ -1354,11 +1437,13 @@ class MainWindow(QMainWindow):
             )
             # Save exactly which stimulus text and image were used in this run.
             stimuli = []
-            for index, scene in enumerate((self.practice_scene, *self.plan.scenes)):
+            for scene in (self.practice_scene, *self.plan.scenes):
+                if scene is None:
+                    continue
                 stimuli.append({
                     "question_set_id": scene.question_set_id,
                     "scene_id": scene.scene_id,
-                    "practice": index == 0,
+                    "practice": scene is self.practice_scene,
                     "scene_text": scene.text,
                     "scenario_description": scene.scenario_description,
                     "image_prompt": scene.image_prompt,
@@ -1383,7 +1468,8 @@ class MainWindow(QMainWindow):
             self.event_logger.write(
                 "session_started",
                 session_id=self.session_paths.session_id,
-                practice_scenes=1,
+                practice_scenes=int(self.practice_scene is not None),
+                planned_neutral_clips=max(0, len(self.plan.scenes) - 1),
                 planned_scenes=len(self.plan.scenes),
                 planned_segments=self.plan.actual_segments,
             )
@@ -1399,10 +1485,13 @@ class MainWindow(QMainWindow):
         self.scene_index = 0
         self.segment_index = -1
         self.captured_segments = 0
-        self.is_practice = True
-        self.flow_state = "instructions"
-        self.experiment.show_instructions()
-        self.event_logger.write("experiment_instructions_shown")
+        self.is_practice = self.practice_scene is not None
+        if self.is_practice:
+            self.flow_state = "instructions"
+            self.experiment.show_instructions()
+            self.event_logger.write("experiment_instructions_shown")
+        else:
+            self._show_scene_summary()
 
     @property
     def current_scene(self) -> Scene:
@@ -1733,16 +1822,112 @@ class MainWindow(QMainWindow):
         ):
             self._finish_experiment()
         else:
-            self.scene_index += 1
-            self._show_scene_summary()
+            self._start_neutral_rest(scene)
+
+    def _start_neutral_rest(self, after_scene: Scene) -> None:
+        assert self.settings and self.session_paths and self.event_logger
+        self.audio_player.stop()
+        self.neutral_scene = make_neutral_scene(after_scene, self.scene_index + 1)
+        requested_path = self.session_paths.raw / (
+            f"neutral_after_{self.scene_index + 1:03d}_"
+            f"{after_scene.question_set_id}_{after_scene.scene_id}.mp4"
+        )
+        try:
+            self.neutral_raw_path = self.camera.start_recording(requested_path)
+        except Exception as exc:
+            self._camera_error(str(exc))
+            return
+        self.flow_state = "neutral_rest"
+        self.experiment.show_neutral_rest(self.settings.neutral_rest_seconds)
+        self.neutral_rest_clock.start()
+        self.event_logger.write(
+            "neutral_rest_started",
+            scene_id=self.neutral_scene.scene_id,
+            after_scene_id=after_scene.scene_id,
+            before_scene_id=self.plan.scenes[self.scene_index + 1].scene_id,
+            raw_video=str(self.neutral_raw_path),
+            duration_seconds=self.settings.neutral_rest_seconds,
+            discard_start_ms=NEUTRAL_TRIM_MS,
+        )
+        self.neutral_rest_timer.start()
+
+    def _update_neutral_rest(self) -> None:
+        if self.flow_state != "neutral_rest" or self.finishing:
+            self.neutral_rest_timer.stop()
+            return
+        assert self.settings
+        remaining_ms = (
+            self.settings.neutral_rest_seconds * 1000
+            - self.neutral_rest_clock.elapsed()
+        )
+        if remaining_ms <= 0:
+            self._finish_neutral_rest()
+        else:
+            self.experiment.update_neutral_rest_countdown((remaining_ms + 999) // 1000)
+
+    def _finish_neutral_rest(self) -> None:
+        assert self.settings and self.session_paths and self.event_logger
+        assert self.manifest and self.split_manager and self.neutral_scene
+        self.neutral_rest_timer.stop()
+        try:
+            actual_raw, duration_ms = self.camera.stop_recording()
+            if duration_ms <= NEUTRAL_TRIM_MS:
+                raise ValueError(
+                    self.translator.text("neutral_recording_short", duration=duration_ms)
+                )
+            timing = neutral_timing(duration_ms)
+            if not actual_raw.is_file() or actual_raw.stat().st_size == 0:
+                raise ValueError(self.translator.text("neutral_recording_empty"))
+        except Exception as exc:
+            self.event_logger.write("neutral_rest_failed", error=str(exc))
+            self._camera_error(str(exc))
+            return
+        rows = build_manifest_rows(
+            participant_id=self.settings.participant_id,
+            session_paths=self.session_paths,
+            scene=self.neutral_scene,
+            scene_order=self.scene_index + 1,
+            raw_video_path=actual_raw,
+            timings=[timing],
+        )
+        self.manifest.add_rows(rows)
+        row = rows[0]
+        task = SplitTask(
+            clip_key=f"{row['question_set_id']}|{row['scene_id']}|{row['segment_id']}",
+            raw_path=actual_raw,
+            output_path=self.session_paths.root / str(row["clip_video_path"]),
+            start_ms=timing.start_ms,
+            end_ms=timing.end_ms,
+        )
+        self.split_total += 1
+        if self.settings.split_mode == "immediate":
+            self.split_manager.enqueue(task)
+        else:
+            self.deferred_tasks.append(task)
+        self.neutral_clips += 1
+        self.event_logger.write(
+            "neutral_rest_completed",
+            scene_id=self.neutral_scene.scene_id,
+            raw_video=str(actual_raw),
+            start_ms=timing.start_ms,
+            end_ms=timing.end_ms,
+            duration_ms=timing.duration_ms,
+            label="neutral",
+        )
+        self.neutral_scene = None
+        self.neutral_raw_path = None
+        self.scene_index += 1
+        self._show_scene_summary()
 
     def _finish_experiment(self) -> None:
         assert self.settings and self.event_logger and self.split_manager
         self.finishing = True
+        self.neutral_rest_timer.stop()
         self.audio_player.stop()
         self.event_logger.write(
             "recording_phase_completed",
             captured_segments=self.captured_segments,
+            neutral_clips=self.neutral_clips,
             split_tasks=self.split_total,
         )
         if self.settings.split_mode == "deferred":
@@ -1787,6 +1972,7 @@ class MainWindow(QMainWindow):
                 ),
                 "finished_at": utc_now(),
                 "captured_segments": self.captured_segments,
+                "neutral_clips": self.neutral_clips,
                 "split_completed": self.split_done,
                 "split_failures": self.split_failures,
             }
@@ -1797,6 +1983,7 @@ class MainWindow(QMainWindow):
         self.event_logger.write(
             "session_completed",
             captured_segments=self.captured_segments,
+            neutral_clips=self.neutral_clips,
             split_failures=self.split_failures,
         )
         session_root = self.session_paths.root
