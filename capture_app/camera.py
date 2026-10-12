@@ -17,6 +17,9 @@ from PySide6.QtWidgets import QLabel
 from .video_recorder import TimestampedVideoWriter
 
 
+MIN_CAPTURE_FPS = 25.0
+
+
 @dataclass(frozen=True)
 class CameraDevice:
     index: int
@@ -81,6 +84,10 @@ class CaptureThread(QThread):
         }
 
     def _request_capture_properties(self, capture, request_mjpeg: bool) -> dict:
+        width_ok = bool(capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.target_width))
+        height_ok = bool(capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height))
+        fps_ok = bool(capture.set(cv2.CAP_PROP_FPS, self.target_fps))
+        # DirectShow can renegotiate the input format when dimensions/FPS change.
         fourcc_ok = (
             bool(capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG")))
             if request_mjpeg else None
@@ -88,9 +95,9 @@ class CaptureThread(QThread):
         return {
             "requested_fourcc": "MJPG" if request_mjpeg else None,
             "fourcc_set_ok": fourcc_ok,
-            "width_set_ok": bool(capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.target_width)),
-            "height_set_ok": bool(capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.target_height)),
-            "fps_set_ok": bool(capture.set(cv2.CAP_PROP_FPS, self.target_fps)),
+            "width_set_ok": width_ok,
+            "height_set_ok": height_ok,
+            "fps_set_ok": fps_ok,
             "first_frame_ok": False,
             "fallback_reason": (
                 "Driver declined MJPG request; continuing with its default input."
@@ -103,10 +110,18 @@ class CaptureThread(QThread):
             info = deepcopy(self.capture_configuration)
             count = len(self._frame_times)
             span = self._frame_times[-1] - self._frame_times[0] if count > 1 else 0.0
+            measured_fps = (count - 1) / span if span > 0 else None
+            intervals = [b - a for a, b in zip(self._frame_times, list(self._frame_times)[1:])]
             info.update({
-                "measured_capture_fps": (count - 1) / span if span > 0 else None,
+                "measured_capture_fps": measured_fps,
                 "measured_window_seconds": span,
                 "observed_frames": count,
+                "minimum_capture_fps": MIN_CAPTURE_FPS,
+                "capture_rate_status": (
+                    "warming_up" if span < 2.0
+                    else "ok" if measured_fps >= MIN_CAPTURE_FPS else "low"
+                ),
+                "max_frame_interval_ms": max(intervals) * 1000 if intervals else None,
             })
             return info
 
@@ -161,6 +176,14 @@ class CaptureThread(QThread):
             reported_fps = driver_value(cv2.CAP_PROP_FPS)
             fourcc_value = driver_value(cv2.CAP_PROP_FOURCC)
             fourcc_code = int(fourcc_value) & 0xFFFFFFFF if fourcc_value is not None else None
+            if (
+                attempts[-1]["requested_fourcc"] == "MJPG"
+                and attempts[-1]["fourcc_set_ok"]
+                and fourcc_code != cv2.VideoWriter_fourcc(*"MJPG")
+            ):
+                attempts[-1]["fallback_reason"] = (
+                    "Driver accepted MJPG request but reported a different or unknown final input format."
+                )
             self.fps = (
                 min(reported_fps, self.target_fps)
                 if reported_fps is not None and reported_fps > 0

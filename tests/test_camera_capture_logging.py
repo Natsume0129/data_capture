@@ -40,3 +40,28 @@ def test_unwritable_diagnostic_folder_does_not_interrupt_capture(tmp_path, caplo
     MainWindow._log_camera_capture_config(owner, "preview")
 
     assert "Unable to write camera capture diagnostics" in caplog.text
+
+
+def test_periodic_monitor_records_low_fps_to_project_and_session(tmp_path) -> None:
+    from capture_app.session import EventLogger
+
+    info = {"measured_capture_fps": 20.0, "capture_rate_status": "low", "minimum_capture_fps": 25.0}
+    session_log = EventLogger(tmp_path / "events.jsonl")
+    owner = SimpleNamespace(project_root=tmp_path,
+                            camera=SimpleNamespace(is_active=True, capture_info=info),
+                            event_logger=session_log)
+    owner._log_camera_capture_config = lambda stage, data: MainWindow._log_camera_capture_config(owner, stage, data)
+    try:
+        MainWindow._monitor_camera_capture(owner)
+    finally:
+        session_log.close()
+    project = json.loads((tmp_path / "logs/camera_capture.jsonl").read_text(encoding="utf-8"))
+    session = json.loads((tmp_path / "events.jsonl").read_text(encoding="utf-8"))
+    assert project["stage"] == "periodic"
+    assert project["capture_rate_status"] == "low"
+    assert session["event"] == "camera_capture_quality"
+    assert session["minimum_capture_fps"] == 25.0
+
+
+def test_periodic_monitor_skips_closed_camera() -> None:
+    MainWindow._monitor_camera_capture(SimpleNamespace(camera=SimpleNamespace(is_active=False)))

@@ -991,6 +991,10 @@ class MainWindow(QMainWindow):
         self._restore_setup_settings()
         self._sync_tts_language(self.translator.language)
         self._reset_runtime()
+        self.capture_diagnostics_timer = QTimer(self)
+        self.capture_diagnostics_timer.setInterval(5000)
+        self.capture_diagnostics_timer.timeout.connect(self._monitor_camera_capture)
+        self.capture_diagnostics_timer.start()
         self.resize(1320, 900)
         self.retranslate()
 
@@ -1179,8 +1183,22 @@ class MainWindow(QMainWindow):
                 str(exc),
             )
 
-    def _log_camera_capture_config(self, stage: str) -> None:
-        info = getattr(self.camera, "capture_info", {})
+    def _monitor_camera_capture(self) -> None:
+        if not self.camera.is_active:
+            return
+        info = self.camera.capture_info
+        self._log_camera_capture_config("periodic", info)
+        if self.event_logger is not None:
+            try:
+                self.event_logger.write("camera_capture_quality", **info)
+            except OSError:
+                logging.getLogger(__name__).warning(
+                    "Unable to write session camera diagnostics", exc_info=True
+                )
+
+    def _log_camera_capture_config(self, stage: str, info: dict | None = None) -> None:
+        if info is None:
+            info = getattr(self.camera, "capture_info", {})
         if not info:
             return
         logger = None

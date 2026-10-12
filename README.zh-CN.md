@@ -66,7 +66,11 @@ powershell.exe -ExecutionPolicy Bypass -File "D:\datacapture\run.ps1"
 
 仅摄像头名称包含 `C920`（不区分大小写）时，采集会优先请求 MJPEG（`MJPG`）输入、1920×1080、30 FPS；其他摄像头保持现有采集设置。驱动拒绝请求，或无法读取 MJPG 的首帧时，会回退到默认格式并记录原因。这些是请求值，不保证实际达到30 FPS。MJPEG 输入不改变 MP4/H.264 VFR 输出，也不新增依赖。
 
-预览和实验启动时会将采集诊断写入项目级 `logs/camera_capture.jsonl`（Git 忽略）。实验诊断还会保存到 `session.json` 的 `camera_capture`，以及 `logs/events.jsonl` 的 `camera_capture_config` 事件，包含请求设置、驱动反馈、实际首帧尺寸和 `measured_capture_fps`。后者是摄像头读取及处理链路的实收帧率，不等于驱动的 `reported_fps`。被试实验界面保持不变，不新增摄像头状态。检查更新后的预览前，请先关闭正在运行的程序，再通过 `.\run.ps1` 重新启动。开发机未用实体摄像头实测此改动；请在采集笔记本上选择 C920，先确认预览与诊断再开始正式采集。
+MJPG 必须在分辨率和 FPS 设置之后请求，避免 DirectShow 重新协商时覆盖输入格式。设置成功但最终格式不符时，也会记录诊断原因。此顺序已用实体 C920 验证。
+
+预览和实验启动时会将采集诊断写入项目级 `logs/camera_capture.jsonl`（Git 忽略）。摄像头运行时每 5 秒追加一次诊断；实验期间也写入会话 `logs/events.jsonl` 的 `camera_capture_quality` 事件。诊断包含 `measured_capture_fps`、最近最多 120 帧的测量窗口和最大帧间隔。窗口不足 2 秒时，`capture_rate_status` 为 `warming_up`；否则，实收帧率低于 25 FPS 时为 `low`，达到 25 FPS 时为 `ok`。这是滚动窗口诊断，不等于逐秒保证，也不会自动中止录制。启动诊断仍保存到 `session.json` 的 `camera_capture` 和 `camera_capture_config` 事件。被试实验界面保持不变。检查更新后的预览前，请先关闭正在运行的程序，再通过 `.\run.ps1` 重新启动。
+
+关闭其他摄像头使用程序后，运行 `.venv313\Scripts\python.exe tools\verify_project_camera_fps.py` 可验证项目的 1080p 采集及实际落盘录像。默认测量 15 秒离屏预览和 60 秒录像，将测试视频及 JSON 报告保存在 `tmp/`，同时检查平均帧率、逐秒帧数和视频时间戳。
 
 Neutral 片段会剪掉休息录像的前3000毫秒；正常10秒录像裁剪后约有7秒 neutral 视频。`raw` 仍保留完整休息录像。Neutral 视频与其他切片一起保存在 `clips` 中，其 `manifest.csv` 行通过 `stimulus_format='neutral'` 和 `purpose='neutral'` 识别；events 日志记录休息起止与 trim 信息。Neutral 视频沿用现有的静默切分或实验结束后切分设置。如果摄像头实际录到的休息视频不超过3秒，裁剪后没有有效 neutral 视频，应用会报错并停止，不会生成空 neutral 片段。
 

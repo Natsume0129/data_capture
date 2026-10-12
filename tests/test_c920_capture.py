@@ -100,7 +100,7 @@ def test_mjpeg_preference_is_limited_to_c920_names(name: str, expected: bool) ->
     assert camera.prefers_mjpeg(device) is expected
 
 
-def test_c920_requests_mjpeg_before_resolution_and_fps(monkeypatch) -> None:
+def test_c920_requests_mjpeg_after_resolution_and_fps(monkeypatch) -> None:
     worker = make_worker()
     capture = FakeCapture(worker)
     open_calls = install_captures(monkeypatch, capture)
@@ -111,10 +111,10 @@ def test_c920_requests_mjpeg_before_resolution_and_fps(monkeypatch) -> None:
     assert worker.ready.is_set()
     assert open_calls == [(worker.device.index, worker.device.backend)]
     assert capture.set_calls == [
-        (camera.cv2.CAP_PROP_FOURCC, camera.cv2.VideoWriter_fourcc(*"MJPG")),
         (camera.cv2.CAP_PROP_FRAME_WIDTH, 1920),
         (camera.cv2.CAP_PROP_FRAME_HEIGHT, 1080),
         (camera.cv2.CAP_PROP_FPS, 30.0),
+        (camera.cv2.CAP_PROP_FOURCC, camera.cv2.VideoWriter_fourcc(*"MJPG")),
     ]
     assert capture.release_count == 1
     configuration = worker.capture_configuration
@@ -188,7 +188,7 @@ def test_c920_without_mjpeg_frame_reopens_same_device_with_default_format(monkey
     assert open_calls == [(worker.device.index, worker.device.backend)] * 2
     assert mjpeg_capture.release_count == 1
     assert default_capture.release_count == 1
-    assert mjpeg_capture.set_calls[0] == (
+    assert mjpeg_capture.set_calls[-1] == (
         camera.cv2.CAP_PROP_FOURCC,
         camera.cv2.VideoWriter_fourcc(*"MJPG"),
     )
@@ -208,6 +208,36 @@ def test_c920_without_mjpeg_frame_reopens_same_device_with_default_format(monkey
     assert info["attempts"][1]["requested_fourcc"] is None
     assert info["attempts"][1]["fourcc_set_ok"] is None
     assert info["attempts"][1]["first_frame_ok"] is True
+
+
+def test_resolution_and_fps_renegotiation_does_not_override_mjpeg(monkeypatch) -> None:
+    worker = make_worker()
+
+    class RenegotiatingCapture(FakeCapture):
+        def set(self, property_id, value):
+            accepted = super().set(property_id, value)
+            self.properties[camera.cv2.CAP_PROP_FOURCC] = (
+                value if property_id == camera.cv2.CAP_PROP_FOURCC
+                else camera.cv2.VideoWriter_fourcc(*"YUY2")
+            )
+            return accepted
+
+    capture = RenegotiatingCapture(worker, reported_fourcc="YUY2")
+    install_captures(monkeypatch, capture)
+    worker.run()
+    assert worker.get_capture_info()["reported_fourcc"] == "MJPG"
+    assert worker.get_capture_info()["fallback_reason"] is None
+
+
+def test_accepted_but_ineffective_mjpeg_is_reported(monkeypatch) -> None:
+    worker = make_worker()
+    capture = FakeCapture(worker, reported_fourcc="YUY2")
+    install_captures(monkeypatch, capture)
+    worker.run()
+    info = worker.get_capture_info()
+    assert info["reported_fourcc"] == "YUY2"
+    assert "different or unknown" in info["fallback_reason"]
+    assert info["attempts"][0]["fallback_reason"] == info["fallback_reason"]
 
 
 @pytest.mark.parametrize("name, fourcc_set_ok", [("Integrated Camera", True), ("C920", False)])
@@ -257,11 +287,24 @@ def test_measured_fps_uses_frame_arrivals_and_a_120_frame_window(monkeypatch) ->
     info = worker.get_capture_info()
     assert info["reported_fps"] == 30.0
     assert info["measured_capture_fps"] == pytest.approx(5.0)
+    assert info["capture_rate_status"] == "low"
+    assert info["minimum_capture_fps"] == 25.0
+    assert info["max_frame_interval_ms"] == pytest.approx(200)
     assert info["observed_frames"] == 120
     assert info["measured_window_seconds"] == pytest.approx(119 * 0.2)
     assert first_snapshot["observed_frames"] == 1
     assert first_snapshot["measured_capture_fps"] is None
     assert first_snapshot["measured_window_seconds"] == 0.0
+    assert first_snapshot["capture_rate_status"] == "warming_up"
+
+
+@pytest.mark.parametrize("fps, expected", [(24, "low"), (25, "ok"), (30, "ok")])
+def test_capture_rate_status_uses_25_fps_threshold(fps, expected) -> None:
+    worker = make_worker()
+    frame = np.zeros((24, 32, 3), dtype=np.uint8)
+    for index in range(121):
+        worker._process_frame(frame, captured_at=100.0 + index / fps)
+    assert worker.get_capture_info()["capture_rate_status"] == expected
 
 
 def test_capture_info_is_a_detached_snapshot_and_controller_exposes_it(monkeypatch) -> None:
