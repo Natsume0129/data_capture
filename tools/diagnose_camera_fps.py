@@ -116,6 +116,10 @@ def run_worker(profile, camera_index):
             return result
 
         accepted = {}
+        accepted["width"] = bool(cap.set(cv2.CAP_PROP_FRAME_WIDTH, profile["width"]))
+        accepted["height"] = bool(cap.set(cv2.CAP_PROP_FRAME_HEIGHT, profile["height"]))
+        accepted["fps"] = bool(cap.set(cv2.CAP_PROP_FPS, REQUESTED_FPS))
+        # Match the application's final format request after DirectShow reconfiguration.
         if profile["fourcc"] is not None:
             accepted["fourcc"] = bool(cap.set(
                 cv2.CAP_PROP_FOURCC,
@@ -123,9 +127,6 @@ def run_worker(profile, camera_index):
             ))
         else:
             accepted["fourcc"] = None  # Default format: no FOURCC set call.
-        accepted["width"] = bool(cap.set(cv2.CAP_PROP_FRAME_WIDTH, profile["width"]))
-        accepted["height"] = bool(cap.set(cv2.CAP_PROP_FRAME_HEIGHT, profile["height"]))
-        accepted["fps"] = bool(cap.set(cv2.CAP_PROP_FPS, REQUESTED_FPS))
         result["property_set_return_values"] = accepted
 
         warmup_start = time.perf_counter()
