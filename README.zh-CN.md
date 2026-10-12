@@ -4,6 +4,16 @@
 
 ## 使用项目
 
+### 浏览器视频标注工具
+
+在项目目录执行 `./run_annotation.ps1`，自动打开本地浏览器界面。保持 PowerShell 窗口打开；不需要 API 或新增依赖。若找不到 FFmpeg，可用 `./run_annotation.ps1 -FFmpeg "C:\ffmpeg\bin\ffmpeg.exe"` 指定位置。
+
+选择文件夹后点击“打开”，仅扫描当前目录，按文件名自然排序。每个视频选一个连续区间和一个类别：`neutral`、`polite smile`、`bitter smile`。空格播放/暂停，左右键移动 0.1 秒，I/O 设置起止点，1/2/3 选择类别，Enter 保存并下一条，P 返回，L 循环，D 弃用。输入框获得焦点时快捷键暂停，请点击画面外空白处恢复。
+
+裁剪视频以 `原文件名_trimmed.mp4` 直接写入所选目录，不覆盖原视频；`annotations.csv` 只包含导出成功的裁剪文件名、所在目录和类别。`.video_annotations.json` 保存进度，重新打开同一目录即可续标。D 不删除原视频，但会移除该条由本工具生成的旧裁剪视频及 CSV 条目；可返回重新标注。扫描跳过 `_trimmed.mp4` 文件。
+
+首次选择视频会生成本地临时兼容预览，导出使用原视频。请等待导出中数量归零、处理所有失败项后，再在终端按 Ctrl+C 退出。不要同时启动多个标注实例操作同一目录，也不要在标注过程中用 Excel 打开输出 CSV。所有媒体处理都在本机进行。
+
 55场景完整版题库保留为 `question_set/combined_all_smile_scenarios_55_ja.json`，界面名称为 **苦笑い・表情会話シナリオ統合版（55場面）**；以及 `question_set/combined_all_smile_scenarios_55_zh.json`，界面名称为 **苦笑与社交表情情景题库·中文整合版（55个场景）**。
 默认题库列表同时显示完整版和分轮版。日语分轮文件为 `question_set/smile_scenarios_round_01_ja.json` 至 `question_set/smile_scenarios_round_05_ja.json`，中文分轮文件为 `question_set/smile_scenarios_round_01_zh.json` 至 `question_set/smile_scenarios_round_05_zh.json`。每种语言的第1～5轮各有11个场景，轮间无重叠，5轮合计覆盖55个场景。
 每次实验只选择一种语言：日语题库使用日语TTS（`ja-JP`），中文题库使用中文TTS（`cmn-CN`）。两个语言版本共用图片。

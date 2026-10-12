@@ -43,6 +43,8 @@ events.jsonl
 manifest.csv
 session.json
 stimuli.json
+annotations.csv
+.video_annotations.json
 
 # Google Cloud credentials and local secrets
 .env

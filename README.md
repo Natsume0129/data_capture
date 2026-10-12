@@ -4,6 +4,14 @@ English | [中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 ## Use the project
 
+### Browser video annotation
+
+Run `./run_annotation.ps1` from the project folder; keep the terminal open. The local browser tool needs no API or new dependencies. Specify FFmpeg with `./run_annotation.ps1 -FFmpeg "C:\ffmpeg\bin\ffmpeg.exe"` if needed. Browse to a folder and click Open: only direct video files are listed, in natural filename order.
+
+Keep one interval and one label per video: neutral, polite smile, or bitter smile. Shortcuts: Space play/pause; arrows ±0.1 seconds; I/O start/end; 1/2/3 labels; Enter save/next; P previous; L loop; D discard. Shortcuts are inactive inside text/number inputs. Output is `original-filename_trimmed.mp4` beside the untouched original. `annotations.csv` contains only successful output filenames, output directories, and labels. `.video_annotations.json` enables resume. Discard never deletes originals, but removes that item's previously generated clip and CSV entry. Generated `_trimmed.mp4` files are excluded from scanning.
+
+First playback builds a temporary local browser-compatible preview; exports use the original. Wait for background exports and resolve errors before exiting with Ctrl+C. Do not run multiple annotators against the same folder or open the CSV in Excel during annotation. Media stays local.
+
 The full 55-scene question sets remain available as `question_set/combined_all_smile_scenarios_55_ja.json`, shown as **苦笑い・表情会話シナリオ統合版（55場面）**, and `question_set/combined_all_smile_scenarios_55_zh.json`, shown as **苦笑与社交表情情景题库·中文整合版（55个场景）**.
 The default question-set list includes both the full sets and the round sets. The Japanese round files are `question_set/smile_scenarios_round_01_ja.json` through `question_set/smile_scenarios_round_05_ja.json`; the Chinese round files are `question_set/smile_scenarios_round_01_zh.json` through `question_set/smile_scenarios_round_05_zh.json`. For each language, rounds 1–5 contain 11 scenes each, with no overlap between rounds, and together cover all 55 scenes.
 Select only one language for each experiment: use Japanese TTS (`ja-JP`) for the Japanese set or Chinese TTS (`cmn-CN`) for the Chinese set. Both language versions share the same images.
